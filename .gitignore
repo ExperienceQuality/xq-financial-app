@@ -1,0 +1,62 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Xcode user state / local data
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build products
+build/
+DerivedData/
+*.xcarchive
+
+# XcodeGen (optional local)
+# Keep project.yml; regenerated project is committed for convenience
+
+# Signing / secrets — keep local only
+exportOptions.plist
+*.mobileprovision
+*.p12
+*.pem
+*.p8
+AuthKey_*.p8
+*.cer
+*.certSigningRequest
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+
+# Swift Package Manager
+.swiftpm/
+Packages/
+Package.resolved
+.playground
+
+# CocoaPods / Carthage (if added later)
+Pods/
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Tooling
+*.log
+.idea/
+*.swp
+*~
+.vscode/

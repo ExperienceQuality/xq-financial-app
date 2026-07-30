@@ -1,0 +1,69 @@
+name: ios-xq-finance-app
+options:
+  bundleIdPrefix: com.xq.finance
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+targets:
+  ios-xq-finance-app:
+    type: application
+    platform: iOS
+    sources:
+      - App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-app
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_TEAM: T99X93V7Y2
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        SWIFT_VERSION: 5.0
+        TARGETED_DEVICE_FAMILY: "1,2"
+  ios-xq-finance-appTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - AppTests
+    dependencies:
+      - target: ios-xq-finance-app
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-appTests
+        DEVELOPMENT_TEAM: T99X93V7Y2
+        GENERATE_INFOPLIST_FILE: YES
+
+  ios-xq-finance-appUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - AppUITests
+      - App/XQAccessibilityIdentifier.swift
+    dependencies:
+      - target: ios-xq-finance-app
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-appUITests
+        DEVELOPMENT_TEAM: T99X93V7Y2
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  ios-xq-finance-app:
+    build:
+      targets:
+        ios-xq-finance-app: all
+    test:
+      targets:
+        - ios-xq-finance-appTests
+
+  ios-xq-finance-app-ui-tests:
+    build:
+      targets:
+        ios-xq-finance-app: all
+        ios-xq-finance-appUITests: [test]
+    test:
+      targets:
+        - ios-xq-finance-appUITests

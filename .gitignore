@@ -20,9 +20,6 @@ build/
 DerivedData/
 *.xcarchive
 
-# XcodeGen (optional local)
-# Keep project.yml; regenerated project is committed for convenience
-
 # Signing / secrets — keep local only
 exportOptions.plist
 *.mobileprovision

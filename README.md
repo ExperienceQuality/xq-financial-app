@@ -2,12 +2,11 @@
 
 Native SwiftUI finance portfolio app for iPhone/iPad.
 
-Standalone Xcode project. Requires Xcode 16+, XcodeGen (optional regenerate), iOS 17+.
+Standard Xcode iOS app. Requires Xcode 16+, iOS 17+. Open `ios-xq-finance-app.xcodeproj` in Xcode, or build from the CLI.
 
 ## Build and unit test
 
 ```bash
-xcodegen generate   # optional; regenerates the Xcode project from project.yml
 xcodebuild \
   -project ios-xq-finance-app.xcodeproj \
   -scheme ios-xq-finance-app \

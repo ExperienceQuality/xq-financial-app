@@ -97,6 +97,45 @@ struct PortfolioScreen: ScreenObject {
         assetCard.requireExistence().swipeLeft()
     }
 
+    func swipeToPreviousAsset() {
+        assetCard.requireExistence().swipeRight()
+    }
+
+    @discardableResult
+    func waitForAsset(
+        symbol: String,
+        position: String,
+        timeout: TimeInterval = 8,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        waitForLabel(assetSymbol, equalTo: symbol, timeout: timeout, file: file, line: line)
+        waitForLabel(portfolioPosition, equalTo: position, timeout: timeout, file: file, line: line)
+        return self
+    }
+
+    private func waitForLabel(
+        _ element: XCUIElement,
+        equalTo expected: String,
+        timeout: TimeInterval,
+        file: StaticString,
+        line: UInt
+    ) {
+        element.requireExistence(timeout: timeout, file: file, line: line)
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "label == %@", expected),
+            object: element
+        )
+        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        XCTAssertEqual(
+            result,
+            .completed,
+            "Expected label \(expected), got \(element.label)",
+            file: file,
+            line: line
+        )
+    }
+
     private func confirmDeductionButton() -> XCUIElement {
         let identifier = XQAccessibilityIdentifier.confirmDeductionButton.rawValue
         let alertButton = application.alerts.buttons[identifier].firstMatch

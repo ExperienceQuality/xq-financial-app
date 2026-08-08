@@ -7,9 +7,10 @@ alwaysApply: true
 
 When running, debugging, or suggesting XCUITests for this repo:
 
-- **Always** target the real plugged-in device named **iPhone** on this machine.
+- **Always** target the real plugged-in device named **iPhone** (iPhone 12) on this machine.
 - **Never** use `platform=iOS Simulator` for UI tests (`ios-xq-finance-app-ui-tests` / `AppUITests`).
 - Unit tests (`ios-xq-finance-app` / `AppTests`) may still use the Simulator.
+- IPA archive and device reinstall checks use **David 🥷** (iPhone Air) — see `scripts/archive-ipa.sh`.
 
 ## How to run
 
@@ -22,7 +23,7 @@ Prefer the device script:
 Or resolve UDID then pass it to `xcodebuild`:
 
 ```bash
-DEVICE_ID="$(./scripts/plugged-iphone-udid.sh)"
+DEVICE_ID="$(IOS_DEVICE_NAME=iPhone ./scripts/plugged-iphone-udid.sh)"
 xcodebuild \
   -project ios-xq-finance-app.xcodeproj \
   -scheme ios-xq-finance-app-ui-tests \
@@ -32,14 +33,14 @@ xcodebuild \
   test
 ```
 
-Optional override: `IOS_DEVICE_ID=<udid>`.
+Optional overrides: `IOS_DEVICE_NAME="iPhone"` or `IOS_DEVICE_ID=<udid>`.
 
 ## Preconditions
 
 - Cable connected, phone unlocked and trusted
-- Only one physical iPhone connected (the helper errors if multiple)
+- Only one physical iPhone connected, or set `IOS_DEVICE_NAME` / `IOS_DEVICE_ID`
 - If the runner hangs after “Initiating session”, unlock the phone and dismiss any Automation / Developer Mode prompts
 
 ## In Xcode
 
-Scheme: `ios-xq-finance-app-ui-tests` → destination **iPhone** (physical), not a Simulator.
+Scheme: `ios-xq-finance-app-ui-tests` → destination **iPhone** (physical iPhone 12), not a Simulator.

@@ -8,7 +8,8 @@ CONFIGURATION="${IOS_CONFIGURATION:-Release}"
 ARCHIVE_PATH="${IOS_ARCHIVE_PATH:-${ROOT}/build/ios-xq-finance-app.xcarchive}"
 EXPORT_PATH="${IOS_EXPORT_PATH:-${ROOT}/build/ipa}"
 EXPORT_OPTIONS_PLIST="${IOS_EXPORT_OPTIONS_PLIST:-${ROOT}/exportOptions.plist}"
-DEVICE_ID="${IOS_DEVICE_ID:-}"
+export IOS_DEVICE_NAME="${IOS_ARCHIVE_DEVICE_NAME:-David 🥷}"
+DEVICE_ID="${IOS_DEVICE_ID:-$("${ROOT}/scripts/plugged-iphone-udid.sh")}"
 
 log() {
   printf '==> %s\n' "$*" >&2
@@ -43,7 +44,7 @@ verify_device_provisioning() {
 cd "${ROOT}"
 mkdir -p "$(dirname "${ARCHIVE_PATH}")" "${EXPORT_PATH}"
 
-log "Archiving ${SCHEME} (${CONFIGURATION})"
+log "Archiving ${SCHEME} (${CONFIGURATION}) for device ${DEVICE_ID}"
 xcodebuild \
   -project "${PROJECT_PATH}" \
   -scheme "${SCHEME}" \
@@ -74,9 +75,7 @@ if [[ ! -f "${ipa_path}" ]]; then
   fi
 fi
 
-if [[ -n "${DEVICE_ID}" ]]; then
-  verify_device_provisioning "${ipa_path}" "${DEVICE_ID}"
-fi
+verify_device_provisioning "${ipa_path}" "${DEVICE_ID}"
 
 cd "$(dirname "${ipa_path}")"
 printf '%s/%s\n' "$PWD" "$(basename "${ipa_path}")"

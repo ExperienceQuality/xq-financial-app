@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_PATH="${ROOT}/ios-xq-finance-app.xcodeproj"
 SCHEME="ios-xq-finance-app"
 BUNDLE_ID="com.xq.finance.ios-xq-finance-app"
+export IOS_DEVICE_NAME="${IOS_DEVICE_NAME:-David 🥷}"
 DEVICE_ID="${IOS_DEVICE_ID:-$("${ROOT}/scripts/plugged-iphone-udid.sh")}"
 APP_PATH="${ROOT}/build/Products/Debug-iphoneos/ios-xq-finance-app.app"
 SEEDED=0

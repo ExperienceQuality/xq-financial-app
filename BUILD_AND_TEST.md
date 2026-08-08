@@ -35,9 +35,9 @@ The suite uses `--xq-ui-testing` and `--xq-ui-testing-reset`. Its Application Su
 ## Physical device (optional)
 
 ```bash
-./scripts/run-device-ui-tests.sh
-./scripts/verify-device-reinstall-persistence.sh
-./scripts/archive-ipa.sh
+./scripts/run-device-ui-tests.sh          # UI tests → device named "iPhone" (iPhone 12)
+./scripts/verify-device-reinstall-persistence.sh  # reinstall check → David 🥷 (iPhone Air)
+./scripts/archive-ipa.sh                  # IPA export → David 🥷 (iPhone Air)
 ```
 
-Requires a trusted iPhone, `DEVELOPMENT_TEAM` (default `T99X93V7Y2`), and valid Apple Development signing. Override the device with `IOS_DEVICE_ID`, or let `scripts/plugged-iphone-udid.sh` detect the plugged-in phone. Archive export needs a local `exportOptions.plist` (gitignored).
+Requires trusted iPhones, `DEVELOPMENT_TEAM` (default `T99X93V7Y2`), and valid Apple Development signing. Override targets with `IOS_DEVICE_NAME` / `IOS_DEVICE_ID` (`IOS_ARCHIVE_DEVICE_NAME` for archive). Archive export needs a local `exportOptions.plist` (gitignored).

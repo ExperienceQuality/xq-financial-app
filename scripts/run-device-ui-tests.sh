@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export IOS_DEVICE_NAME="${IOS_DEVICE_NAME:-iPhone}"
 DEVICE_ID="${IOS_DEVICE_ID:-$("${ROOT}/scripts/plugged-iphone-udid.sh")}"
 TEAM_ID="${DEVELOPMENT_TEAM:-T99X93V7Y2}"
 RESULT_DIRECTORY="${ROOT}/build/ui-test-results"

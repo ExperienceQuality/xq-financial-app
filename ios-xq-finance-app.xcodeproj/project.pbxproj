@@ -10,11 +10,13 @@
 		004375E5EA1DC340D5B1E01B /* ExchangeRateScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6DE048666397853E8F07AB /* ExchangeRateScreen.swift */; };
 		02FA8CA62A48D77EE084ECFA /* AssetSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C1D4CBA0D8153A1F40F895 /* AssetSheet.swift */; };
 		079A5A7B2D5C514BD7E7D7DA /* XQPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7845F28C20A4AAFC233A1CC3 /* XQPalette.swift */; };
+		0ABB5FE29BD54CE68E812320 /* AssetDeckNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DFB30E254D4347B4452C68 /* AssetDeckNavigation.swift */; };
 		0E1264644F6DBC28ADE7B953 /* PortfolioStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07E799CAA9E84379E45BDB0 /* PortfolioStore.swift */; };
 		0F11AD792A861DA40B24BAB4 /* PriceEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710FBB65A138585C147C77C2 /* PriceEditorSheet.swift */; };
 		1C68DDF3B8023DDC1C6CA75A /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C531B8CEE015148E2BACCC /* Formatting.swift */; };
 		1CE667373FF3E7FC816C6177 /* AssetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45B046D5D8AADCA3976AA75 /* AssetCardView.swift */; };
 		1D4248640C83F22A42935316 /* PortfolioSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335E0E8E135A1771A180D663 /* PortfolioSummaryView.swift */; };
+		1F7AA74FAF1A435586D4C577 /* AssetDeckNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D60EDDFA342F5B5D7680F /* AssetDeckNavigationTests.swift */; };
 		2055BA65FBA11D13285D762F /* AssetIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67728ED0A85428E6D669F9E5 /* AssetIconView.swift */; };
 		27F1DE3B7268A7888F788B50 /* PersistenceSmokeTestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC87E882799EE91D19ABC23 /* PersistenceSmokeTestRunner.swift */; };
 		326A7019ED731568E605445E /* PortfolioViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435DBF83DA1AA2B0F78B03C3 /* PortfolioViewModelTests.swift */; };
@@ -57,8 +59,6 @@
 		F2BF486A613189B520458215 /* PortfolioSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D74C9424D6ADE62CEE8893E /* PortfolioSnapshot.swift */; };
 		F8A59C2FF0A8F383C60DA2FA /* BuyLotScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1AF249961AC135201FBB88 /* BuyLotScreen.swift */; };
 		FAB36DC49724C7766F0CA880 /* FinanceAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2A592436C645AACC0D4A2 /* FinanceAsset.swift */; };
-		0ABB5FE29BD54CE68E812320 /* AssetDeckNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DFB30E254D4347B4452C68 /* AssetDeckNavigation.swift */; };
-		1F7AA74FAF1A435586D4C577 /* AssetDeckNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D60EDDFA342F5B5D7680F /* AssetDeckNavigationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +79,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02AF278EAC6A763ED2B8B48D /* ios-xq-finance-app.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "ios-xq-finance-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02AF278EAC6A763ED2B8B48D /* ios-xq-finance-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-xq-finance-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E2A592436C645AACC0D4A2 /* FinanceAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceAsset.swift; sourceTree = "<group>"; };
 		0B93E2F6180F83D80D7BE34B /* TransactionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRow.swift; sourceTree = "<group>"; };
 		0C6E62B43D79E9D8CDD1C554 /* DeductionDialogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeductionDialogTests.swift; sourceTree = "<group>"; };
@@ -99,6 +99,7 @@
 		430D79DCFBC6D9079450D72F /* PortfolioLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioLifecycleTests.swift; sourceTree = "<group>"; };
 		435DBF83DA1AA2B0F78B03C3 /* PortfolioViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioViewModelTests.swift; sourceTree = "<group>"; };
 		4567978373BC487574EFBF4F /* MultiAssetDeckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAssetDeckTests.swift; sourceTree = "<group>"; };
+		57DFB30E254D4347B4452C68 /* AssetDeckNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigation.swift; sourceTree = "<group>"; };
 		613175C0AB73151BDF098976 /* SwipeDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirection.swift; sourceTree = "<group>"; };
 		6268B01F323E61B393EA04EA /* EmptyPortfolioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPortfolioView.swift; sourceTree = "<group>"; };
 		65301295CAF4E83E3F5C85DE /* ExchangeRateEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateEditorView.swift; sourceTree = "<group>"; };
@@ -131,7 +132,6 @@
 		EF0AFB7EE7CF7489E2CE47E5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F08DEE0CB448FD422697B1D1 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		FD1AF249961AC135201FBB88 /* BuyLotScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyLotScreen.swift; sourceTree = "<group>"; };
-		57DFB30E254D4347B4452C68 /* AssetDeckNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigation.swift; sourceTree = "<group>"; };
 		FF1D60EDDFA342F5B5D7680F /* AssetDeckNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -363,9 +363,6 @@
 						TestTargetID = C27FCCEB6FC4AC26D427F0C9;
 					};
 					90D03B2503EFBC94325DFAE4 = {
-						DevelopmentTeam = T99X93V7Y2;
-					};
-					C27FCCEB6FC4AC26D427F0C9 = {
 						DevelopmentTeam = T99X93V7Y2;
 					};
 				};
@@ -672,7 +669,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T99X93V7Y2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -681,6 +679,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xq.finance.ios-xq-finance-app";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -691,7 +690,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T99X93V7Y2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -700,6 +700,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xq.finance.ios-xq-finance-app";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

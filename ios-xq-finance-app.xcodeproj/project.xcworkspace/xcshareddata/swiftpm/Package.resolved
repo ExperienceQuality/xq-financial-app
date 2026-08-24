@@ -5,7 +5,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ExperienceQuality/xq-xcuitest-support.git",
       "state" : {
-        "revision" : "d49bf656f8bef33032dfd01a91b52d04af1210df",
+        "revision" : "fd1981533d352be40b8c5a6169cd6eda7bd6bd3c",
         "version" : "0.0.1"
       }
     }

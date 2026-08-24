@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "xq-xcuitest-support",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ExperienceQuality/xq-xcuitest-support.git",
+      "state" : {
+        "revision" : "d49bf656f8bef33032dfd01a91b52d04af1210df",
+        "version" : "0.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}

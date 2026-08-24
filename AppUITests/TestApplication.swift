@@ -1,4 +1,5 @@
 import XCTest
+import XQXCUITestSupport
 
 enum TestApplication {
     static let descriptor = ApplicationDescriptor(
@@ -12,6 +13,10 @@ enum TestApplication {
 
 @MainActor
 class FinanceUITestCase: BaseUITestCase {
+    override class var applicationDescriptor: ApplicationDescriptor {
+        TestApplication.descriptor
+    }
+
     var financeApp: XCUIApplication {
         guard let application else {
             preconditionFailure("Finance UI tests must launch through shared setUp")
@@ -19,16 +24,13 @@ class FinanceUITestCase: BaseUITestCase {
         return application
     }
 
-    override func setUp() {
-        super.setUp()
-        continueAfterFailure = false
-        let app = launchApplication(TestApplication.descriptor, reset: true)
+    override func verifyInitialState(in app: XCUIApplication) {
         PortfolioScreen(application: app).emptyPortfolio.requireExistence()
     }
 
     @discardableResult
     func relaunchPreservingTestData() -> XCUIApplication {
-        relaunchApplication(TestApplication.descriptor)
+        relaunchApplication(TestApplication.descriptor, reset: false)
     }
 
     @discardableResult

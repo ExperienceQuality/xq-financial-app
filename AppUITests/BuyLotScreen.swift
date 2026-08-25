@@ -1,4 +1,5 @@
 import XCTest
+import XQXCUITestSupport
 
 @MainActor
 struct BuyLotScreen: ScreenObject {

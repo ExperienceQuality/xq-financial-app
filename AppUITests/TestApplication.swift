@@ -28,6 +28,18 @@ class FinanceUITestCase: BaseUITestCase {
         PortfolioScreen(application: app).emptyPortfolio.requireExistence()
     }
 
+    func captureScreenshot(named name: String) {
+        guard let application else {
+            XCTFail("Cannot capture a screenshot before launching an application")
+            return
+        }
+
+        let attachment = XCTAttachment(screenshot: application.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
     @discardableResult
     func relaunchPreservingTestData() -> XCUIApplication {
         relaunchApplication(TestApplication.descriptor, reset: false)

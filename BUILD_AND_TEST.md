@@ -11,7 +11,7 @@ SwiftUI iOS app with **unit** (`AppTests`) and **UI** (`AppUITests`) layers.
 - Minimum iOS deployment target: `17.0`
 
 The UI-test target consumes the released `XQXCUITestSupport` Swift package at
-version `0.0.1`. The package is intentionally linked only to
+version `0.1.0`. The package is intentionally linked only to
 `ios-xq-finance-appUITests`; the application and unit-test targets do not
 depend on it.
 

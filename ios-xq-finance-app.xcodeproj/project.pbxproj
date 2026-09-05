@@ -27,7 +27,7 @@
 		3B964D59661EA537EBC41819 /* TransactionSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B8B87970F0B0FFC7BB0A454 /* TransactionSelection.swift */; };
 		467ECC4C9A251CAD3B0A651F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE2628BB9C63DAC245D5C6B3 /* Assets.xcassets */; };
 		4E549C23CEBB3FF147279AD3 /* TransactionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B93E2F6180F83D80D7BE34B /* TransactionRow.swift */; };
-		4E9504A264967B963A2A3820 /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08DEE0CB448FD422697B1D1 /* UITestSupport.swift */; };
+		F1A5C8E72D4B6A9013E7F5C2 /* XQXCUITestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = F7D4A2B91C6E8F305A7B2D14 /* XQXCUITestSupport */; };
 		52329CE01189B9B49B78102F /* ExchangeRateEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65301295CAF4E83E3F5C85DE /* ExchangeRateEditorView.swift */; };
 		5D649CF2A77530E044A802B0 /* SwipeDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613175C0AB73151BDF098976 /* SwipeDirection.swift */; };
 		5E2EDE6111ED45B9C2DE1A88 /* PortfolioViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14BC6826AC8C5EF09051E747 /* PortfolioViewModel.swift */; };
@@ -130,7 +130,6 @@
 		E9C531B8CEE015148E2BACCC /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		EB99E56FF55A154FD0E9916C /* AddAssetSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetSheet.swift; sourceTree = "<group>"; };
 		EF0AFB7EE7CF7489E2CE47E5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		F08DEE0CB448FD422697B1D1 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		FD1AF249961AC135201FBB88 /* BuyLotScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyLotScreen.swift; sourceTree = "<group>"; };
 		FF1D60EDDFA342F5B5D7680F /* AssetDeckNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -182,7 +181,6 @@
 				2595EC3CDA86C5571DAF1D21 /* PriceEditorScreen.swift */,
 				11134E6B34EB4EC47BECFEE8 /* SheetValidationTests.swift */,
 				D6D936B784B8958FD1B7B4C3 /* TestApplication.swift */,
-				F08DEE0CB448FD422697B1D1 /* UITestSupport.swift */,
 			);
 			path = AppUITests;
 			sourceTree = "<group>";
@@ -300,6 +298,7 @@
 			buildConfigurationList = E7AFC468F271BBC6B1F827DE /* Build configuration list for PBXNativeTarget "ios-xq-finance-appUITests" */;
 			buildPhases = (
 				9E1887A46D8D42513557C6B9 /* Sources */,
+				B3E1F4A67C9D2E805F8A1B34 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -308,6 +307,7 @@
 			);
 			name = "ios-xq-finance-appUITests";
 			packageProductDependencies = (
+				F7D4A2B91C6E8F305A7B2D14 /* XQXCUITestSupport */,
 			);
 			productName = "ios-xq-finance-appUITests";
 			productReference = 812300C42A31FA8950FD2845 /* ios-xq-finance-appUITests.xctest */;
@@ -378,6 +378,9 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64D6E97C352362C51EE2943B /* Products */;
+			packageReferences = (
+				C8E2A4F71B6D9E305A7C2F18 /* XCRemoteSwiftPackageReference "xq-xcuitest-support" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -467,12 +470,22 @@
 				F233DBAE028FC4E3E87504FF /* PriceEditorScreen.swift in Sources */,
 				7C7C0411BCCABEC09B589DBE /* SheetValidationTests.swift in Sources */,
 				A9A07FC67A3BDA4D0782FF09 /* TestApplication.swift in Sources */,
-				4E9504A264967B963A2A3820 /* UITestSupport.swift in Sources */,
 				B1C8ACBC93FE8AFCFE61CBE0 /* XQAccessibilityIdentifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B3E1F4A67C9D2E805F8A1B34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1A5C8E72D4B6A9013E7F5C2 /* XQXCUITestSupport in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		35162DF83A392480B60CB016 /* PBXTargetDependency */ = {
@@ -486,6 +499,25 @@
 			targetProxy = E98C6A9AE0C298E33A2379F9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C8E2A4F71B6D9E305A7C2F18 /* XCRemoteSwiftPackageReference "xq-xcuitest-support" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ExperienceQuality/xq-xcuitest-support.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F7D4A2B91C6E8F305A7B2D14 /* XQXCUITestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C8E2A4F71B6D9E305A7C2F18 /* XCRemoteSwiftPackageReference "xq-xcuitest-support" */;
+			productName = XQXCUITestSupport;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0958EF0688F8455060AF8915 /* Debug */ = {

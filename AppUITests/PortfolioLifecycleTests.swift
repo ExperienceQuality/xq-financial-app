@@ -2,6 +2,26 @@ import XCTest
 
 @MainActor
 final class PortfolioLifecycleTests: FinanceUITestCase {
+    func testBuyLotRowAndActionsFitInsideAssetCard() {
+        let portfolio = PortfolioScreen(application: financeApp)
+
+        portfolio.openAddAsset().add(symbol: "XQTEST", name: "XQ Test Asset", startingPrice: "100")
+        portfolio.openBuyLotEditor().add(units: "2", price: "100")
+
+        let card = portfolio.assetCard.requireExistence()
+        let row = portfolio.transactionRow.requireExistence()
+        let editButton = portfolio.editTransactionButton.requireExistence()
+        let deductButton = portfolio.deductTransactionButton.requireExistence()
+
+        XCTAssertTrue(row.isHittable)
+        XCTAssertTrue(editButton.isHittable)
+        XCTAssertTrue(deductButton.isHittable)
+        XCTAssertGreaterThanOrEqual(row.frame.minX, card.frame.minX)
+        XCTAssertLessThanOrEqual(row.frame.maxX, card.frame.maxX)
+        XCTAssertLessThanOrEqual(editButton.frame.maxX, card.frame.maxX)
+        XCTAssertLessThanOrEqual(deductButton.frame.maxX, card.frame.maxX)
+    }
+
     func testPortfolioLifecyclePersistsInIsolatedStorage() {
         var app = financeApp
         var portfolio = PortfolioScreen(application: app)
@@ -13,6 +33,9 @@ final class PortfolioLifecycleTests: FinanceUITestCase {
         portfolio.openBuyLotEditor().add(units: "2", price: "120")
         portfolio.transactionRow.requireExistence()
         XCTAssertTrue(portfolio.assetCurrentValue.requireExistence().label.contains("$"))
+
+        portfolio.openFirstBuyLotEditor().updateUnits(to: "3")
+        portfolio.transactionRow.requireExistence()
 
         portfolio.switchToVNDFromSegmentEdge()
         XCTAssertTrue(portfolio.assetCurrentValue.requireExistence().label.contains("VND"))

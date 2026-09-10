@@ -2,19 +2,17 @@ import SwiftUI
 
 struct TransactionHeaderRow: View {
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             Text("Units")
-                .frame(width: 64, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Price / unit")
-                .frame(width: 84, alignment: .leading)
-
-            Spacer(minLength: 4)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Subtotal")
-                .frame(width: 86, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
-            Color.clear.frame(width: 38, height: 1)
+            Color.clear.frame(width: 60, height: 1)
         }
         .font(.system(size: 12, weight: .bold))
         .foregroundStyle(XQPalette.muted)

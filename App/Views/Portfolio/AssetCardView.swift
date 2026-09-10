@@ -7,6 +7,7 @@ struct AssetCardView: View {
     let exchangeRateUSDToVND: Double
     let onEditPrice: () -> Void
     let onAddBuyLot: () -> Void
+    let onEditTransaction: (BuyTransaction) -> Void
     let onSelectTransaction: (BuyTransaction) -> Void
 
     var body: some View {
@@ -112,7 +113,8 @@ struct AssetCardView: View {
                                 displayCurrency: displayCurrency,
                                 assetCurrency: asset.nativeCurrency,
                                 exchangeRateUSDToVND: exchangeRateUSDToVND,
-                                onDeduct: { onSelectTransaction(transaction) }
+                                onDeduct: { onSelectTransaction(transaction) },
+                                onEdit: { onEditTransaction(transaction) }
                             )
 
                             if transaction.id != asset.transactions.last?.id {

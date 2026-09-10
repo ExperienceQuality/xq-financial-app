@@ -22,6 +22,11 @@ struct BuyLotScreen: ScreenObject {
         saveButton.tapWhenHittable()
     }
 
+    func updateUnits(to units: String) {
+        unitsField.replaceText(with: units)
+        saveButton.tapWhenHittable()
+    }
+
     func cancel() {
         application.buttons["Cancel"].tapWhenHittable()
     }

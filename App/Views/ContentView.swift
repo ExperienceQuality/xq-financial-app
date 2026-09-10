@@ -49,6 +49,9 @@ struct ContentView: View {
                         onAddAsset: { viewModel.presentAddAsset() },
                         onEditPrice: { viewModel.presentEditPrice(for: $0) },
                         onAddBuyLot: { viewModel.presentAddBuyLot(for: $0) },
+                        onEditTransaction: { asset, transaction in
+                            viewModel.activeSheet = .editBuyLot(assetID: asset.id, transactionID: transaction.id)
+                        },
                         onSelectTransaction: { asset, transaction in
                             viewModel.requestDeduction(asset: asset, transaction: transaction)
                         }
@@ -98,6 +101,16 @@ struct ContentView: View {
                         .presentationDetents([.medium])
                 } else {
                     Text("Asset unavailable")
+                        .presentationDetents([.medium])
+                }
+
+            case .editBuyLot(let assetID, let transactionID):
+                if let assetIndex = viewModel.assetIndex(for: assetID),
+                   let transaction = viewModel.assets[assetIndex].transactions.first(where: { $0.id == transactionID }) {
+                    BuyLotEditorSheet(asset: $viewModel.assets[assetIndex], transaction: transaction)
+                        .presentationDetents([.medium])
+                } else {
+                    Text("Buy lot unavailable")
                         .presentationDetents([.medium])
                 }
             }

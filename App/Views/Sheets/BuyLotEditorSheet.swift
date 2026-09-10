@@ -3,8 +3,16 @@ import SwiftUI
 struct BuyLotEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var asset: FinanceAsset
-    @State private var unitsText = ""
-    @State private var unitPriceText = ""
+    private let transaction: BuyTransaction?
+    @State private var unitsText: String
+    @State private var unitPriceText: String
+
+    init(asset: Binding<FinanceAsset>, transaction: BuyTransaction? = nil) {
+        _asset = asset
+        self.transaction = transaction
+        _unitsText = State(initialValue: transaction.map { String($0.units) } ?? "")
+        _unitPriceText = State(initialValue: transaction.map { String($0.unitPrice) } ?? "")
+    }
 
     private var units: Double? {
         unitsText.decimalNumber
@@ -34,6 +42,7 @@ struct BuyLotEditorSheet: View {
 
                     TextField("Price per unit (\(asset.nativeCurrency.label))", text: $unitPriceText)
                         .keyboardType(.decimalPad)
+                        .disabled(transaction != nil)
                         .accessibilityIdentifier(XQAccessibilityIdentifier.buyLotPriceField.rawValue)
 
                     HStack {
@@ -45,12 +54,14 @@ struct BuyLotEditorSheet: View {
                 }
 
                 Section {
-                    Text("Buy lots are entered in \(asset.nativeCurrency.label). Adding a lot increases units owned and current total value for this asset.")
+                    Text(transaction == nil
+                        ? "Buy lots are entered in \(asset.nativeCurrency.label). Adding a lot increases units owned and current total value for this asset."
+                        : "Updating units changes the asset's total units and current total value. The lot's date and price stay unchanged.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Add \(asset.symbol) Lot")
+            .navigationTitle(transaction == nil ? "Add \(asset.symbol) Lot" : "Edit \(asset.symbol) Lot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -58,13 +69,13 @@ struct BuyLotEditorSheet: View {
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button(transaction == nil ? "Add" : "Save") {
                         guard let units, let unitPrice else { return }
-                        asset.addBuyLot(
-                            units: units,
-                            unitPrice: unitPrice,
-                            date: Date.now.buyLotDate
-                        )
+                        if let transaction {
+                            asset.updateBuyLotUnits(transactionID: transaction.id, units: units)
+                        } else {
+                            asset.addBuyLot(units: units, unitPrice: unitPrice, date: Date.now.buyLotDate)
+                        }
                         dismiss()
                     }
                     .disabled(!canSave)

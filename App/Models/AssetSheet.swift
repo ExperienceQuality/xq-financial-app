@@ -5,6 +5,7 @@ enum AssetSheet: Identifiable {
     case editPrice(UUID)
     case addBuyLot(UUID)
     case editBuyLot(assetID: UUID, transactionID: UUID)
+    case editExchangeRate
 
     var id: String {
         switch self {
@@ -16,6 +17,8 @@ enum AssetSheet: Identifiable {
             return "add-buy-lot-\(assetID.uuidString)"
         case .editBuyLot(let assetID, let transactionID):
             return "edit-buy-lot-\(assetID.uuidString)-\(transactionID.uuidString)"
+        case .editExchangeRate:
+            return "edit-exchange-rate"
         }
     }
 }

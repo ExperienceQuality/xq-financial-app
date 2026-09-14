@@ -187,6 +187,14 @@ final class AppTests: XCTestCase {
         XCTAssertTrue(PortfolioStore.shouldResetUITestData(arguments: ["app", "--xq-ui-testing", "--xq-ui-testing-reset"]))
     }
 
+    func testAccessibilityIdentifiersAreUniqueAndNamespaced() {
+        let identifiers = XQAccessibilityIdentifier.allCases.map(\.rawValue)
+
+        XCTAssertEqual(Set(identifiers).count, identifiers.count)
+        XCTAssertTrue(identifiers.allSatisfy { $0.hasPrefix("xq.") })
+        XCTAssertTrue(identifiers.allSatisfy { !$0.isEmpty })
+    }
+
     private func makeUSDAsset() -> FinanceAsset {
         FinanceAsset(
             id: UUID(uuidString: "46C64E8D-039F-4E41-8E0C-7D6D970E3F91")!,

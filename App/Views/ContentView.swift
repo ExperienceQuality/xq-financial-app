@@ -37,7 +37,8 @@ struct ContentView: View {
                     )
 
                     ExchangeRateEditorView(
-                        exchangeRateUSDToVND: $viewModel.exchangeRateUSDToVND
+                        exchangeRateUSDToVND: viewModel.exchangeRateUSDToVND,
+                        onEdit: { viewModel.presentEditExchangeRate() }
                     )
 
                     AssetDeckView(
@@ -113,6 +114,12 @@ struct ContentView: View {
                     Text("Buy lot unavailable")
                         .presentationDetents([.medium])
                 }
+
+            case .editExchangeRate:
+                ExchangeRateSheet(
+                    exchangeRateUSDToVND: $viewModel.exchangeRateUSDToVND
+                )
+                .presentationDetents([.medium])
             }
         }
         .alert(

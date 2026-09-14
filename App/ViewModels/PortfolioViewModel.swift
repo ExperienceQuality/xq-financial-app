@@ -54,6 +54,10 @@ final class PortfolioViewModel {
         activeSheet = .addBuyLot(asset.id)
     }
 
+    func presentEditExchangeRate() {
+        activeSheet = .editExchangeRate
+    }
+
     func requestDeduction(asset: FinanceAsset, transaction: BuyTransaction) {
         selectedTransaction = TransactionSelection(assetID: asset.id, transaction: transaction)
         isShowingDeductConfirmation = true

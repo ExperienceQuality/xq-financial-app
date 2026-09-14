@@ -2,28 +2,21 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SIMULATOR_NAME="${IOS_SIMULATOR_NAME:-iPhone 16}"
-SIMULATOR_OS="${IOS_SIMULATOR_OS:-}"
+PROJECT_PATH="${ROOT}/ios-xq-finance-app.xcodeproj"
+SCHEME="${IOS_SCHEME:-ios-xq-finance-app}"
+DESTINATION="${IOS_TEST_DESTINATION:-platform=iOS Simulator,name=iPhone 16}"
 DERIVED_DATA_PATH="${IOS_DERIVED_DATA_PATH:-${ROOT}/build/DerivedData}"
 SOURCE_PACKAGES_PATH="${IOS_SOURCE_PACKAGES_PATH:-${ROOT}/build/SourcePackages}"
-RESULT_DIRECTORY="${ROOT}/build/ui-test-results"
-RESULT_BUNDLE="${RESULT_DIRECTORY}/finance-ui-tests-$(date +%Y%m%d-%H%M%S).xcresult"
-
-echo "Using iOS Simulator: ${SIMULATOR_NAME}"
+RESULT_DIRECTORY="${ROOT}/build/unit-test-results"
+RESULT_BUNDLE="${RESULT_DIRECTORY}/finance-unit-tests-$(date +%Y%m%d-%H%M%S).xcresult"
 
 cd "${ROOT}"
 "${ROOT}/scripts/resolve-packages.sh"
 mkdir -p "${DERIVED_DATA_PATH}" "${RESULT_DIRECTORY}"
 
-DESTINATION="platform=iOS Simulator,name=${SIMULATOR_NAME}"
-if [[ -n "${SIMULATOR_OS}" ]]; then
-  DESTINATION+=",OS=${SIMULATOR_OS}"
-fi
-
 xcodebuild \
-  -quiet \
-  -project "${ROOT}/ios-xq-finance-app.xcodeproj" \
-  -scheme ios-xq-finance-app-ui-tests \
+  -project "${PROJECT_PATH}" \
+  -scheme "${SCHEME}" \
   -destination "${DESTINATION}" \
   -derivedDataPath "${DERIVED_DATA_PATH}" \
   -clonedSourcePackagesDirPath "${SOURCE_PACKAGES_PATH}" \
@@ -33,4 +26,4 @@ xcodebuild \
   CODE_SIGNING_REQUIRED=NO \
   test
 
-echo "UI-test result: ${RESULT_BUNDLE}"
+echo "Unit-test result: ${RESULT_BUNDLE}"

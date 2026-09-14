@@ -1,0 +1,16 @@
+# hub-stage: deploy
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy is not configured
+    if: ${{ false }}
+    runs-on: macos-15
+    steps:
+      - run: echo 'Device/TestFlight deployment requires an explicitly configured protected environment and credentials.'

@@ -1,0 +1,16 @@
+# hub-stage: publish
+name: Publish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish is not configured
+    if: ${{ false }}
+    runs-on: macos-15
+    steps:
+      - run: echo 'Signed archive/IPA publishing requires an explicitly configured protected runner and signing credentials.'

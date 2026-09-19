@@ -16,6 +16,7 @@ struct PortfolioSummaryView: View {
                 .foregroundStyle(XQPalette.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.58)
+                .accessibilityIdentifier(XQAccessibilityIdentifier.portfolioTotal.rawValue)
 
             Text("1 USD = \(String(format: "%.0f", exchangeRateUSDToVND)) VND")
                 .font(.system(size: 13, weight: .semibold))

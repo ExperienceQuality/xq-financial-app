@@ -41,6 +41,30 @@ struct FinanceAsset: Identifiable {
         currentPrice = max(0, price)
     }
 
+    @discardableResult
+    mutating func updateBuyLot(transactionID: UUID, units: Double, unitPrice: Double) -> Bool {
+        let totalCost = units * unitPrice
+        guard units.isFinite,
+              unitPrice.isFinite,
+              totalCost.isFinite,
+              units > 0,
+              unitPrice > 0 else {
+            return false
+        }
+        guard let index = transactions.firstIndex(where: { $0.id == transactionID }) else {
+            return false
+        }
+
+        let transaction = transactions[index]
+        transactions[index] = BuyTransaction(
+            id: transaction.id,
+            date: transaction.date,
+            units: units,
+            unitPrice: unitPrice
+        )
+        return true
+    }
+
     mutating func deduct(transactionID: UUID) {
         transactions.removeAll { $0.id == transactionID }
     }

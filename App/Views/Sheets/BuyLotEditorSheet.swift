@@ -1,10 +1,34 @@
 import SwiftUI
 
 struct BuyLotEditorSheet: View {
+    enum Mode {
+        case add
+        case edit(BuyTransaction)
+    }
+
     @Environment(\.dismiss) private var dismiss
-    @Binding var asset: FinanceAsset
-    @State private var unitsText = ""
-    @State private var unitPriceText = ""
+
+    let asset: FinanceAsset
+    let mode: Mode
+    let onSave: (Double, Double) -> Bool
+
+    @State private var unitsText: String
+    @State private var unitPriceText: String
+
+    init(asset: FinanceAsset, mode: Mode, onSave: @escaping (Double, Double) -> Bool) {
+        self.asset = asset
+        self.mode = mode
+        self.onSave = onSave
+
+        switch mode {
+        case .add:
+            _unitsText = State(initialValue: "")
+            _unitPriceText = State(initialValue: "")
+        case .edit(let transaction):
+            _unitsText = State(initialValue: Self.draftText(transaction.units))
+            _unitPriceText = State(initialValue: Self.draftText(transaction.unitPrice))
+        }
+    }
 
     private var units: Double? {
         unitsText.decimalNumber
@@ -16,12 +40,36 @@ struct BuyLotEditorSheet: View {
 
     private var subtotal: Double? {
         guard let units, let unitPrice else { return nil }
-        return units * unitPrice
+        let value = units * unitPrice
+        return value.isFinite ? value : nil
     }
 
     private var canSave: Bool {
-        guard let units, let unitPrice else { return false }
-        return units > 0 && unitPrice > 0
+        guard let units, let unitPrice, subtotal != nil else { return false }
+        return units.isFinite && unitPrice.isFinite && units > 0 && unitPrice > 0
+    }
+
+    private var title: String {
+        switch mode {
+        case .add: return "Add \(asset.symbol) Lot"
+        case .edit: return "Edit \(asset.symbol) Lot"
+        }
+    }
+
+    private var actionTitle: String {
+        switch mode {
+        case .add: return "Add"
+        case .edit: return "Save"
+        }
+    }
+
+    private var helpText: String {
+        switch mode {
+        case .add:
+            return "Buy lots are entered in \(asset.nativeCurrency.label). Adding a lot increases units owned and current total value for this asset."
+        case .edit:
+            return "Buy lots are entered in \(asset.nativeCurrency.label). Updating this lot changes units owned and cost basis without changing the current market price."
+        }
     }
 
     var body: some View {
@@ -45,12 +93,12 @@ struct BuyLotEditorSheet: View {
                 }
 
                 Section {
-                    Text("Buy lots are entered in \(asset.nativeCurrency.label). Adding a lot increases units owned and current total value for this asset.")
+                    Text(helpText)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Add \(asset.symbol) Lot")
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -58,13 +106,8 @@ struct BuyLotEditorSheet: View {
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        guard let units, let unitPrice else { return }
-                        asset.addBuyLot(
-                            units: units,
-                            unitPrice: unitPrice,
-                            date: Date.now.buyLotDate
-                        )
+                    Button(actionTitle) {
+                        guard let units, let unitPrice, onSave(units, unitPrice) else { return }
                         dismiss()
                     }
                     .disabled(!canSave)
@@ -72,5 +115,10 @@ struct BuyLotEditorSheet: View {
                 }
             }
         }
+    }
+
+    private static func draftText(_ value: Double) -> String {
+        let text = String(value)
+        return text.hasSuffix(".0") ? String(text.dropLast(2)) : text
     }
 }

@@ -9,6 +9,7 @@ struct AssetDeckView: View {
     let onAddAsset: () -> Void
     let onEditPrice: (FinanceAsset) -> Void
     let onAddBuyLot: (FinanceAsset) -> Void
+    let onEditTransaction: (FinanceAsset, BuyTransaction) -> Void
     let onSelectTransaction: (FinanceAsset, BuyTransaction) -> Void
 
     var body: some View {
@@ -30,6 +31,7 @@ struct AssetDeckView: View {
                         exchangeRateUSDToVND: exchangeRateUSDToVND,
                         onEditPrice: { onEditPrice(asset) },
                         onAddBuyLot: { onAddBuyLot(asset) },
+                        onEditTransaction: { onEditTransaction(asset, $0) },
                         onSelectTransaction: { onSelectTransaction(asset, $0) }
                     )
                     .offset(x: xOffset(for: deckPosition), y: yOffset(for: deckPosition))

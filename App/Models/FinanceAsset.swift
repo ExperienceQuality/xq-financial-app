@@ -41,6 +41,19 @@ struct FinanceAsset: Identifiable {
         currentPrice = max(0, price)
     }
 
+    /// Compatibility helper for callers that only change lot units.
+    @discardableResult
+    mutating func updateBuyLotUnits(transactionID: UUID, units: Double) -> Bool {
+        guard let transaction = transactions.first(where: { $0.id == transactionID }) else {
+            return false
+        }
+        return updateBuyLot(
+            transactionID: transactionID,
+            units: units,
+            unitPrice: transaction.unitPrice
+        )
+    }
+
     @discardableResult
     mutating func updateBuyLot(transactionID: UUID, units: Double, unitPrice: Double) -> Bool {
         let totalCost = units * unitPrice

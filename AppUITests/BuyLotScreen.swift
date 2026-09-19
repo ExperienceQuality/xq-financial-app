@@ -1,4 +1,5 @@
 import XCTest
+import XQXCUITestSupport
 
 @MainActor
 struct BuyLotScreen: ScreenObject {
@@ -19,6 +20,11 @@ struct BuyLotScreen: ScreenObject {
     func add(units: String, price: String) {
         unitsField.replaceText(with: units)
         priceField.replaceText(with: price)
+        saveButton.tapWhenHittable()
+    }
+
+    func updateUnits(to units: String) {
+        unitsField.replaceText(with: units)
         saveButton.tapWhenHittable()
     }
 

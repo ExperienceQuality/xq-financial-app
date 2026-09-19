@@ -1,4 +1,5 @@
 import XCTest
+import XQXCUITestSupport
 
 @MainActor
 struct PortfolioScreen: ScreenObject {
@@ -38,6 +39,14 @@ struct PortfolioScreen: ScreenObject {
             .firstMatch
     }
 
+    var editTransactionButton: XCUIElement {
+        application.buttons[XQAccessibilityIdentifier.editTransactionButton.rawValue].firstMatch
+    }
+
+    var deductTransactionButton: XCUIElement {
+        application.buttons[XQAccessibilityIdentifier.deductTransactionButton.rawValue].firstMatch
+    }
+
     var portfolioPosition: XCUIElement {
         application.descendants(matching: .any)
             .matching(identifier: XQAccessibilityIdentifier.portfolioPosition.rawValue)
@@ -60,6 +69,11 @@ struct PortfolioScreen: ScreenObject {
 
     func openBuyLotEditor() -> BuyLotScreen {
         application.buttons[XQAccessibilityIdentifier.addBuyLotButton.rawValue].tapWhenHittable()
+        return BuyLotScreen(application: application)
+    }
+
+    func openFirstBuyLotEditor() -> BuyLotScreen {
+        editTransactionButton.tapWhenHittable()
         return BuyLotScreen(application: application)
     }
 

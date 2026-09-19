@@ -1,9 +1,8 @@
 import SwiftUI
 
 struct ExchangeRateEditorView: View {
-    @Binding var exchangeRateUSDToVND: Double
-    @State private var isEditing = false
-    @State private var text = ""
+    let exchangeRateUSDToVND: Double
+    let onEdit: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -20,8 +19,7 @@ struct ExchangeRateEditorView: View {
             Spacer()
 
             Button {
-                text = String(format: "%.0f", exchangeRateUSDToVND)
-                isEditing = true
+                onEdit()
             } label: {
                 HStack(spacing: 8) {
                     Text(String(format: "%.0f", exchangeRateUSDToVND))
@@ -51,15 +49,5 @@ struct ExchangeRateEditorView: View {
             RoundedRectangle(cornerRadius: 18)
                 .stroke(XQPalette.divider, lineWidth: 1)
         )
-        .onAppear {
-            text = String(format: "%.0f", exchangeRateUSDToVND)
-        }
-        .sheet(isPresented: $isEditing) {
-            ExchangeRateSheet(
-                exchangeRateUSDToVND: $exchangeRateUSDToVND,
-                initialText: text
-            )
-            .presentationDetents([.medium])
-        }
     }
 }

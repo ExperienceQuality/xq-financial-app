@@ -3,17 +3,22 @@ import SwiftUI
 struct ExchangeRateSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var exchangeRateUSDToVND: Double
-    @State var initialText: String
+    @State private var text: String
+
+    init(exchangeRateUSDToVND: Binding<Double>) {
+        self._exchangeRateUSDToVND = exchangeRateUSDToVND
+        _text = State(initialValue: String(format: "%.0f", exchangeRateUSDToVND.wrappedValue))
+    }
 
     private var parsedValue: Double? {
-        initialText.decimalNumber
+        text.decimalNumber
     }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Exchange Rate") {
-                    TextField("USD to VND", text: $initialText)
+                    TextField("USD to VND", text: $text)
                         .keyboardType(.decimalPad)
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .accessibilityIdentifier(XQAccessibilityIdentifier.exchangeRateField.rawValue)

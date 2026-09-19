@@ -12,42 +12,37 @@ struct TransactionRow: View {
         let unitPriceUSD = assetCurrency.usdAmount(from: transaction.unitPrice, exchangeRateUSDToVND: exchangeRateUSDToVND)
         let subtotalUSD = assetCurrency.usdAmount(from: transaction.totalCost, exchangeRateUSDToVND: exchangeRateUSDToVND)
 
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
+            Text(transaction.units.formattedUnits)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(XQPalette.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(displayCurrency.formatted(fromUSD: unitPriceUSD, exchangeRateUSDToVND: exchangeRateUSDToVND))
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(XQPalette.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(displayCurrency.formatted(fromUSD: subtotalUSD, exchangeRateUSDToVND: exchangeRateUSDToVND))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(XQPalette.ink)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .minimumScaleFactor(0.64)
+                .lineLimit(1)
+
             Button(action: onEdit) {
-                HStack(spacing: 8) {
-                    Text(transaction.units.formattedUnits)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(XQPalette.ink)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.72)
-                        .frame(width: 58, alignment: .leading)
-
-                    Text(displayCurrency.formatted(fromUSD: unitPriceUSD, exchangeRateUSDToVND: exchangeRateUSDToVND))
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
-                        .foregroundStyle(XQPalette.muted)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.68)
-                        .frame(width: 72, alignment: .leading)
-
-                    Spacer(minLength: 2)
-
-                    Text(displayCurrency.formatted(fromUSD: subtotalUSD, exchangeRateUSDToVND: exchangeRateUSDToVND))
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(XQPalette.ink)
-                        .frame(width: 76, alignment: .trailing)
-                        .minimumScaleFactor(0.64)
-                        .lineLimit(1)
-
-                    Image(systemName: "pencil")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(XQPalette.muted)
-                }
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                Image(systemName: "pencil")
+                    .font(.system(size: 13, weight: .bold))
+                    .frame(width: 30, height: 30)
+                    .background(XQPalette.softFill, in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Edit buy lot from \(transaction.date)")
-            .accessibilityHint("Change units and purchase price")
+            .foregroundStyle(XQPalette.ink)
+            .accessibilityLabel("Edit units for buy lot from \(transaction.date)")
             .accessibilityIdentifier(XQAccessibilityIdentifier.editTransactionButton.rawValue)
 
             Button(role: .destructive) {

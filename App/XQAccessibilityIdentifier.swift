@@ -1,4 +1,4 @@
-enum XQAccessibilityIdentifier: String {
+enum XQAccessibilityIdentifier: String, CaseIterable {
     case emptyPortfolio = "xq.portfolio.empty"
     case addAssetButton = "xq.portfolio.add-asset"
     case displayCurrencyToggle = "xq.display-currency.toggle"
@@ -13,6 +13,7 @@ enum XQAccessibilityIdentifier: String {
     case transactionRow = "xq.transaction.row"
     case editTransactionButton = "xq.transaction.edit"
     case deductTransactionButton = "xq.transaction.deduct"
+    case editTransactionButton = "xq.transaction.edit"
     case confirmDeductionButton = "xq.transaction.confirm-deduction"
     case cancelDeductionButton = "xq.transaction.cancel-deduction"
     case symbolField = "xq.add-asset.symbol"

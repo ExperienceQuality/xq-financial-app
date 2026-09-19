@@ -62,6 +62,21 @@ final class AppTests: XCTestCase {
         XCTAssertEqual(asset.unitsOwned, 60, accuracy: 0.001)
     }
 
+    func testUpdatingBuyLotUnitsPreservesLotDetailsAndUpdatesTotals() throws {
+        var asset = makeUSDAsset()
+        let transaction = try XCTUnwrap(asset.transactions[1])
+        let originalCost = asset.totalCost
+
+        asset.updateBuyLotUnits(transactionID: transaction.id, units: 7.5)
+
+        let updated = try XCTUnwrap(asset.transactions.first(where: { $0.id == transaction.id }))
+        XCTAssertEqual(updated.units, 7.5, accuracy: 0.001)
+        XCTAssertEqual(updated.unitPrice, transaction.unitPrice, accuracy: 0.001)
+        XCTAssertEqual(updated.date, transaction.date)
+        XCTAssertEqual(asset.unitsOwned, 64.842, accuracy: 0.001)
+        XCTAssertEqual(asset.totalCost, originalCost - (transaction.units * transaction.unitPrice) + (7.5 * transaction.unitPrice), accuracy: 0.001)
+    }
+
     func testDecimalCommaInputIsAccepted() throws {
         XCTAssertEqual("0,5".decimalNumber, 0.5)
         XCTAssertEqual(" 170,25 ".decimalNumber, 170.25)
@@ -170,6 +185,14 @@ final class AppTests: XCTestCase {
         XCTAssertFalse(PortfolioStore.shouldResetUITestData(arguments: ["app", "--xq-ui-testing-reset"]))
         XCTAssertFalse(PortfolioStore.shouldResetUITestData(arguments: ["app", "--xq-ui-testing"]))
         XCTAssertTrue(PortfolioStore.shouldResetUITestData(arguments: ["app", "--xq-ui-testing", "--xq-ui-testing-reset"]))
+    }
+
+    func testAccessibilityIdentifiersAreUniqueAndNamespaced() {
+        let identifiers = XQAccessibilityIdentifier.allCases.map(\.rawValue)
+
+        XCTAssertEqual(Set(identifiers).count, identifiers.count)
+        XCTAssertTrue(identifiers.allSatisfy { $0.hasPrefix("xq.") })
+        XCTAssertTrue(identifiers.allSatisfy { !$0.isEmpty })
     }
 
     private func makeUSDAsset() -> FinanceAsset {

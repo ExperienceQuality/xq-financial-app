@@ -1,0 +1,82 @@
+name: ios-xq-finance-app
+options:
+  bundleIdPrefix: com.xq.finance
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+packages:
+  XQXCUITestSupport:
+    url: https://github.com/ExperienceQuality/xq-xcuitest-support.git
+    version: 0.1.0
+targets:
+  ios-xq-finance-app:
+    type: application
+    platform: iOS
+    sources:
+      - App
+    resources:
+      - App/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-app
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        CODE_SIGN_IDENTITY: Apple Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: T99X93V7Y2
+        PROVISIONING_PROFILE_SPECIFIER: ""
+        SWIFT_VERSION: "5.10"
+        TARGETED_DEVICE_FAMILY: "1,2"
+
+  ios-xq-finance-appTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - AppTests
+    dependencies:
+      - target: ios-xq-finance-app
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-appTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.10"
+        TARGETED_DEVICE_FAMILY: "1,2"
+
+  ios-xq-finance-appUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - AppUITests
+      - App/XQAccessibilityIdentifier.swift
+    dependencies:
+      - target: ios-xq-finance-app
+      - package: XQXCUITestSupport
+        product: XQXCUITestSupport
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-appUITests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.10"
+        TARGETED_DEVICE_FAMILY: "1,2"
+
+schemes:
+  ios-xq-finance-app:
+    build:
+      targets:
+        ios-xq-finance-app: all
+    test:
+      targets:
+        - ios-xq-finance-appTests
+
+  ios-xq-finance-app-ui-tests:
+    build:
+      targets:
+        ios-xq-finance-app: all
+        ios-xq-finance-appUITests: [test]
+    test:
+      targets:
+        - ios-xq-finance-appUITests

@@ -62,11 +62,6 @@ struct BuyLotEditorSheet: View {
         }
     }
 
-    private var isEditing: Bool {
-        if case .edit = mode { return true }
-        return false
-    }
-
     private var helpText: String {
         switch mode {
         case .add:
@@ -86,7 +81,6 @@ struct BuyLotEditorSheet: View {
 
                     TextField("Price per unit (\(asset.nativeCurrency.label))", text: $unitPriceText)
                         .keyboardType(.decimalPad)
-                        .disabled(isEditing)
                         .accessibilityIdentifier(XQAccessibilityIdentifier.buyLotPriceField.rawValue)
 
                     HStack {

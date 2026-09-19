@@ -42,7 +42,7 @@ struct TransactionRow: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(XQPalette.ink)
-            .accessibilityLabel("Edit units for buy lot from \(transaction.date)")
+            .accessibilityLabel("Edit buy lot from \(transaction.date)")
             .accessibilityIdentifier(XQAccessibilityIdentifier.editTransactionButton.rawValue)
 
             Button(role: .destructive) {

@@ -83,6 +83,8 @@ final class PortfolioViewModel {
             units: units,
             unitPrice: unitPrice
         )
+    }
+
     func presentEditExchangeRate() {
         activeSheet = .editExchangeRate
     }

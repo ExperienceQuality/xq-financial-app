@@ -13,7 +13,6 @@ enum XQAccessibilityIdentifier: String, CaseIterable {
     case transactionRow = "xq.transaction.row"
     case editTransactionButton = "xq.transaction.edit"
     case deductTransactionButton = "xq.transaction.deduct"
-    case editTransactionButton = "xq.transaction.edit"
     case confirmDeductionButton = "xq.transaction.confirm-deduction"
     case cancelDeductionButton = "xq.transaction.cancel-deduction"
     case symbolField = "xq.add-asset.symbol"

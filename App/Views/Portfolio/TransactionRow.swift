@@ -37,7 +37,7 @@ struct TransactionRow: View {
             Button(action: onEdit) {
                 Image(systemName: "pencil")
                     .font(.system(size: 13, weight: .bold))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 44, height: 44)
                     .background(XQPalette.softFill, in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)

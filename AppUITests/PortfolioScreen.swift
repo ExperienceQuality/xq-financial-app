@@ -27,6 +27,12 @@ struct PortfolioScreen: ScreenObject {
             .firstMatch
     }
 
+    var portfolioTotal: XCUIElement {
+        application.descendants(matching: .any)
+            .matching(identifier: XQAccessibilityIdentifier.portfolioTotal.rawValue)
+            .firstMatch
+    }
+
     var transactionRow: XCUIElement {
         application.descendants(matching: .any)
             .matching(identifier: XQAccessibilityIdentifier.transactionRow.rawValue)
@@ -125,6 +131,17 @@ struct PortfolioScreen: ScreenObject {
     ) -> Self {
         waitForLabel(assetSymbol, equalTo: symbol, timeout: timeout, file: file, line: line)
         waitForLabel(portfolioPosition, equalTo: position, timeout: timeout, file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertPortfolioTotal(
+        _ expected: String,
+        timeout: TimeInterval = 8,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        waitForLabel(portfolioTotal, equalTo: expected, timeout: timeout, file: file, line: line)
         return self
     }
 

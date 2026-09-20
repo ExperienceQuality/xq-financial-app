@@ -51,7 +51,7 @@ struct ContentView: View {
                         onEditPrice: { viewModel.presentEditPrice(for: $0) },
                         onAddBuyLot: { viewModel.presentAddBuyLot(for: $0) },
                         onEditTransaction: { asset, transaction in
-                            viewModel.activeSheet = .editBuyLot(assetID: asset.id, transactionID: transaction.id)
+                            viewModel.presentEditBuyLot(for: asset, transaction: transaction)
                         },
                         onSelectTransaction: { asset, transaction in
                             viewModel.requestDeduction(asset: asset, transaction: transaction)
@@ -98,7 +98,15 @@ struct ContentView: View {
 
             case .addBuyLot(let assetID):
                 if let index = viewModel.assetIndex(for: assetID) {
-                    BuyLotEditorSheet(asset: $viewModel.assets[index])
+                    let asset = viewModel.assets[index]
+                    BuyLotEditorSheet(asset: asset, mode: .add) { units, unitPrice in
+                        viewModel.addBuyLot(
+                            assetID: assetID,
+                            units: units,
+                            unitPrice: unitPrice,
+                            date: Date.now.buyLotDate
+                        )
+                    }
                         .presentationDetents([.medium])
                 } else {
                     Text("Asset unavailable")
@@ -106,10 +114,17 @@ struct ContentView: View {
                 }
 
             case .editBuyLot(let assetID, let transactionID):
-                if let assetIndex = viewModel.assetIndex(for: assetID),
-                   let transaction = viewModel.assets[assetIndex].transactions.first(where: { $0.id == transactionID }) {
-                    BuyLotEditorSheet(asset: $viewModel.assets[assetIndex], transaction: transaction)
-                        .presentationDetents([.medium])
+                if let index = viewModel.assetIndex(for: assetID),
+                   let transaction = viewModel.assets[index].transactions.first(where: { $0.id == transactionID }) {
+                    BuyLotEditorSheet(asset: viewModel.assets[index], mode: .edit(transaction)) { units, unitPrice in
+                        viewModel.updateBuyLot(
+                            assetID: assetID,
+                            transactionID: transactionID,
+                            units: units,
+                            unitPrice: unitPrice
+                        )
+                    }
+                    .presentationDetents([.medium])
                 } else {
                     Text("Buy lot unavailable")
                         .presentationDetents([.medium])

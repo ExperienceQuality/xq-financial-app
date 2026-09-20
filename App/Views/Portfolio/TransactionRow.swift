@@ -5,8 +5,8 @@ struct TransactionRow: View {
     let displayCurrency: DisplayCurrency
     let assetCurrency: AssetCurrency
     let exchangeRateUSDToVND: Double
-    let onDeduct: () -> Void
     let onEdit: () -> Void
+    let onDeduct: () -> Void
 
     var body: some View {
         let unitPriceUSD = assetCurrency.usdAmount(from: transaction.unitPrice, exchangeRateUSDToVND: exchangeRateUSDToVND)
@@ -37,12 +37,12 @@ struct TransactionRow: View {
             Button(action: onEdit) {
                 Image(systemName: "pencil")
                     .font(.system(size: 13, weight: .bold))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 44, height: 44)
                     .background(XQPalette.softFill, in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
             .foregroundStyle(XQPalette.ink)
-            .accessibilityLabel("Edit units for buy lot from \(transaction.date)")
+            .accessibilityLabel("Edit buy lot from \(transaction.date)")
             .accessibilityIdentifier(XQAccessibilityIdentifier.editTransactionButton.rawValue)
 
             Button(role: .destructive) {
@@ -50,7 +50,7 @@ struct TransactionRow: View {
             } label: {
                 Image(systemName: "trash")
                     .font(.system(size: 14, weight: .bold))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 44, height: 44)
                     .background(XQPalette.destructive.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)

@@ -54,6 +54,37 @@ final class PortfolioViewModel {
         activeSheet = .addBuyLot(asset.id)
     }
 
+    func presentEditBuyLot(for asset: FinanceAsset, transaction: BuyTransaction) {
+        activeSheet = .editBuyLot(assetID: asset.id, transactionID: transaction.id)
+    }
+
+    @discardableResult
+    func addBuyLot(
+        assetID: UUID,
+        units: Double,
+        unitPrice: Double,
+        date: String
+    ) -> Bool {
+        guard let index = assetIndex(for: assetID) else { return false }
+        assets[index].addBuyLot(units: units, unitPrice: unitPrice, date: date)
+        return true
+    }
+
+    @discardableResult
+    func updateBuyLot(
+        assetID: UUID,
+        transactionID: UUID,
+        units: Double,
+        unitPrice: Double
+    ) -> Bool {
+        guard let index = assetIndex(for: assetID) else { return false }
+        return assets[index].updateBuyLot(
+            transactionID: transactionID,
+            units: units,
+            unitPrice: unitPrice
+        )
+    }
+
     func presentEditExchangeRate() {
         activeSheet = .editExchangeRate
     }

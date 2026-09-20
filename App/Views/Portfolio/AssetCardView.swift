@@ -113,8 +113,8 @@ struct AssetCardView: View {
                                 displayCurrency: displayCurrency,
                                 assetCurrency: asset.nativeCurrency,
                                 exchangeRateUSDToVND: exchangeRateUSDToVND,
-                                onDeduct: { onSelectTransaction(transaction) },
-                                onEdit: { onEditTransaction(transaction) }
+                                onEdit: { onEditTransaction(transaction) },
+                                onDeduct: { onSelectTransaction(transaction) }
                             )
 
                             if transaction.id != asset.transactions.last?.id {

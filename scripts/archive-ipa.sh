@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_PATH="${ROOT}/ios-xq-finance-app.xcodeproj"
 SCHEME="${IOS_SCHEME:-ios-xq-finance-app}"
 CONFIGURATION="${IOS_CONFIGURATION:-Release}"
+TEAM_ID="${DEVELOPMENT_TEAM:-T99X93V7Y2}"
 ARCHIVE_PATH="${IOS_ARCHIVE_PATH:-${ROOT}/build/ios-xq-finance-app.xcarchive}"
 EXPORT_PATH="${IOS_EXPORT_PATH:-${ROOT}/build/ipa}"
 EXPORT_OPTIONS_PLIST="${IOS_EXPORT_OPTIONS_PLIST:-${ROOT}/exportOptions.plist}"
@@ -14,6 +15,25 @@ DEVICE_ID="${IOS_DEVICE_ID:-$("${ROOT}/scripts/plugged-iphone-udid.sh")}"
 log() {
   printf '==> %s\n' "$*" >&2
 }
+
+if [[ ! -f "${EXPORT_OPTIONS_PLIST}" ]]; then
+  EXPORT_OPTIONS_PLIST="${TMPDIR:-/tmp}/${SCHEME}-export-options-$$.plist"
+  trap 'rm -f "${EXPORT_OPTIONS_PLIST}"' EXIT
+  cat >"${EXPORT_OPTIONS_PLIST}" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>compileBitcode</key><false/>
+  <key>destination</key><string>export</string>
+  <key>method</key><string>debugging</string>
+  <key>signingStyle</key><string>automatic</string>
+  <key>stripSwiftSymbols</key><true/>
+  <key>teamID</key><string>${TEAM_ID}</string>
+</dict>
+</plist>
+PLIST
+fi
 
 verify_device_provisioning() {
   local ipa_path="$1"
@@ -52,6 +72,7 @@ xcodebuild \
   -destination "generic/platform=iOS" \
   -configuration "${CONFIGURATION}" \
   -archivePath "${ARCHIVE_PATH}" \
+  "DEVELOPMENT_TEAM=${TEAM_ID}" \
   -allowProvisioningUpdates \
   archive \
   1>&2
@@ -62,7 +83,6 @@ xcodebuild \
   -archivePath "${ARCHIVE_PATH}" \
   -exportPath "${EXPORT_PATH}" \
   -exportOptionsPlist "${EXPORT_OPTIONS_PLIST}" \
-  -allowProvisioningUpdates \
   1>&2
 
 ipa_path="${EXPORT_PATH}/${SCHEME}.ipa"

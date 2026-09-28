@@ -30,6 +30,9 @@ jobs:
       - name: Show toolchain
         run: xcodebuild -version
 
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+
       - name: Generate Xcode project
         run: ./scripts/generate-project.sh
 
@@ -63,6 +66,9 @@ jobs:
         run: |
           xcodebuild -version
           xcrun simctl list devices available
+
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
 
       - name: Generate Xcode project
         run: ./scripts/generate-project.sh

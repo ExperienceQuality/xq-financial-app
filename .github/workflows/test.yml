@@ -30,6 +30,12 @@ jobs:
       - name: Show toolchain
         run: xcodebuild -version
 
+      - name: Generate Xcode project
+        run: ./scripts/generate-project.sh
+
+      - name: Verify generated project is committed
+        run: git diff --exit-code -- ios-xq-finance-app.xcodeproj
+
       - name: Run unit tests
         run: ./scripts/run-unit-tests.sh
 
@@ -57,6 +63,12 @@ jobs:
         run: |
           xcodebuild -version
           xcrun simctl list devices available
+
+      - name: Generate Xcode project
+        run: ./scripts/generate-project.sh
+
+      - name: Verify generated project is committed
+        run: git diff --exit-code -- ios-xq-finance-app.xcodeproj
 
       - name: Run UI tests
         env:

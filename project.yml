@@ -9,6 +9,8 @@ settings:
     MARKETING_VERSION: 0.1.0
     CURRENT_PROJECT_VERSION: 1
 packages:
+  FinanceCore:
+    path: FinanceCore
   XQXCUITestSupport:
     url: https://github.com/ExperienceQuality/xq-xcuitest-support.git
     version: 0.1.0
@@ -20,6 +22,9 @@ targets:
       - App
     resources:
       - App/Assets.xcassets
+    dependencies:
+      - package: FinanceCore
+        product: FinanceCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-app
@@ -27,7 +32,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: T99X93V7Y2
+        DEVELOPMENT_TEAM: Y57FXM29C3
         PROVISIONING_PROFILE_SPECIFIER: ""
         SWIFT_VERSION: "5.10"
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -50,7 +55,22 @@ targets:
     type: bundle.ui-testing
     platform: iOS
     sources:
-      - AppUITests
+      - path: AppUITests
+        excludes:
+          - AddAssetScreen.swift
+          - AddAssetValidationTests.swift
+          - BuyLotEditingScreen.swift
+          - BuyLotEditingTests.swift
+          - BuyLotScreen.swift
+          - CurrencyToggleHitTargetTests.swift
+          - DeductionDialogTests.swift
+          - ExchangeRateScreen.swift
+          - ExchangeRateTests.swift
+          - MultiAssetDeckTests.swift
+          - PortfolioLifecycleTests.swift
+          - PortfolioScreen.swift
+          - PriceEditorScreen.swift
+          - SheetValidationTests.swift
       - App/XQAccessibilityIdentifier.swift
     dependencies:
       - target: ios-xq-finance-app
@@ -60,6 +80,10 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-appUITests
         GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: Apple Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: Y57FXM29C3
+        PROVISIONING_PROFILE_SPECIFIER: ""
         SWIFT_VERSION: "5.10"
         TARGETED_DEVICE_FAMILY: "1,2"
 

@@ -12,6 +12,7 @@ RESULT_BUNDLE="${RESULT_DIRECTORY}/finance-ui-tests-$(date +%Y%m%d-%H%M%S).xcres
 echo "Using iOS Simulator: ${SIMULATOR_NAME}"
 
 cd "${ROOT}"
+"${ROOT}/scripts/generate-project.sh"
 "${ROOT}/scripts/resolve-packages.sh"
 mkdir -p "${DERIVED_DATA_PATH}" "${RESULT_DIRECTORY}"
 

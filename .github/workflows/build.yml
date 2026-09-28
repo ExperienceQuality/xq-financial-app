@@ -32,6 +32,12 @@ jobs:
           xcodebuild -version
           swift --version
 
+      - name: Generate Xcode project
+        run: ./scripts/generate-project.sh
+
+      - name: Verify generated project is committed
+        run: git diff --exit-code -- ios-xq-finance-app.xcodeproj
+
       - name: Resolve package dependencies
         run: ./scripts/resolve-packages.sh
 

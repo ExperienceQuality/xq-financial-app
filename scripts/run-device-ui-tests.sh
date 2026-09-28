@@ -13,6 +13,7 @@ echo "Using dedicated physical device: ${IOS_DEVICE_NAME} (${DEVICE_ID})"
 echo "Using DEVELOPMENT_TEAM: ${TEAM_ID}"
 
 mkdir -p "${RESULT_DIRECTORY}"
+"${ROOT}/scripts/generate-project.sh"
 
 xcodebuild \
   -quiet \

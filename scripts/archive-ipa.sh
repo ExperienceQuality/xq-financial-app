@@ -42,6 +42,7 @@ verify_device_provisioning() {
 }
 
 cd "${ROOT}"
+"${ROOT}/scripts/generate-project.sh"
 mkdir -p "$(dirname "${ARCHIVE_PATH}")" "${EXPORT_PATH}"
 
 log "Archiving ${SCHEME} (${CONFIGURATION}) for device ${DEVICE_ID}"

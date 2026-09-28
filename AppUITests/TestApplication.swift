@@ -25,7 +25,7 @@ class FinanceUITestCase: BaseUITestCase {
     }
 
     override func verifyInitialState(in app: XCUIApplication) {
-        PortfolioScreen(application: app).emptyPortfolio.requireExistence()
+        AssetModelPortfolioScreen(application: app).emptyState.requireExistence()
     }
 
     func captureScreenshot(named name: String) {
@@ -48,7 +48,7 @@ class FinanceUITestCase: BaseUITestCase {
     @discardableResult
     func resetToCleanState() -> XCUIApplication {
         let app = relaunchApplication(TestApplication.descriptor, reset: true)
-        PortfolioScreen(application: app).emptyPortfolio.requireExistence()
+        AssetModelPortfolioScreen(application: app).emptyState.requireExistence()
         return app
     }
 }

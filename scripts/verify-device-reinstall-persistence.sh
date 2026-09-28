@@ -36,6 +36,7 @@ restore_on_failure() {
 trap restore_on_failure EXIT
 
 cd "${ROOT}"
+"${ROOT}/scripts/generate-project.sh"
 
 log "Building ${SCHEME} for physical device ${DEVICE_ID}"
 xcodebuild \

@@ -9,6 +9,7 @@ DERIVED_DATA_PATH="${IOS_DERIVED_DATA_PATH:-${ROOT}/build/DerivedData}"
 SOURCE_PACKAGES_PATH="${IOS_SOURCE_PACKAGES_PATH:-${ROOT}/build/SourcePackages}"
 
 cd "${ROOT}"
+"${ROOT}/scripts/generate-project.sh"
 "${ROOT}/scripts/resolve-packages.sh"
 mkdir -p "${DERIVED_DATA_PATH}"
 

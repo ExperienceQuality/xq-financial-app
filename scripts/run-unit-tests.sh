@@ -11,6 +11,7 @@ RESULT_DIRECTORY="${ROOT}/build/unit-test-results"
 RESULT_BUNDLE="${RESULT_DIRECTORY}/finance-unit-tests-$(date +%Y%m%d-%H%M%S).xcresult"
 
 cd "${ROOT}"
+"${ROOT}/scripts/generate-project.sh"
 "${ROOT}/scripts/resolve-packages.sh"
 mkdir -p "${DERIVED_DATA_PATH}" "${RESULT_DIRECTORY}"
 

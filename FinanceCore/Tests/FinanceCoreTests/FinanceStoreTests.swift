@@ -3,6 +3,19 @@ import XCTest
 @testable import FinanceCore
 
 final class FinanceStoreTests: XCTestCase {
+    func testFinanceUITestResetIgnoresFitnessResetFlag() {
+        XCTAssertFalse(FinanceStorage.shouldReset(arguments: [
+            "app",
+            "--xq-ui-testing",
+            "--xq-fitness-ui-testing-reset"
+        ]))
+        XCTAssertTrue(FinanceStorage.shouldReset(arguments: [
+            "app",
+            "--xq-ui-testing",
+            "--xq-ui-testing-reset"
+        ]))
+    }
+
     func testCreateAssetsAndCalculatePortfolioInVND() throws {
         let persistence = InMemoryFinancePersistence()
         let store = try FinanceStore(persistence: persistence)

@@ -11,6 +11,8 @@ settings:
 packages:
   FinanceCore:
     path: FinanceCore
+  FitnessCore:
+    path: FitnessCore
   XQXCUITestSupport:
     url: https://github.com/ExperienceQuality/xq-xcuitest-support.git
     version: 0.1.0
@@ -25,11 +27,15 @@ targets:
     dependencies:
       - package: FinanceCore
         product: FinanceCore
+      - package: FitnessCore
+        product: FitnessCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.xq.finance.ios-xq-finance-app
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: T99X93V7Y2
@@ -72,6 +78,8 @@ targets:
           - PriceEditorScreen.swift
           - SheetValidationTests.swift
       - App/XQAccessibilityIdentifier.swift
+      - App/FitnessAccessibility.swift
+      - App/SuperAppAccessibility.swift
     dependencies:
       - target: ios-xq-finance-app
       - package: XQXCUITestSupport

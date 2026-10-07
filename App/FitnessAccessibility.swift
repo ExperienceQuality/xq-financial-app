@@ -1,0 +1,33 @@
+import SwiftUI
+
+enum FitnessAccessibility {
+    static let emptyRoutineList = "fitness.routines.empty"
+    static let createRoutineButton = "fitness.routines.create"
+    static let routineRow = "fitness.routines.row"
+    static let routineNameField = "fitness.routine-editor.name"
+    static let routineNotesField = "fitness.routine-editor.notes"
+    static let routineSaveButton = "fitness.routine-editor.save"
+    static let editorError = "fitness.routine-editor.error"
+    static let routineWorkspace = "fitness.routine.workspace"
+    static let trainingDayRow = "fitness.training-day.row"
+    static let trainingDayScreen = "fitness.training-day.screen"
+    static let addTrainingSessionButton = "fitness.training-session.add"
+    static let trainingSessionNameField = "fitness.training-session-editor.name"
+    static let trainingSessionSaveButton = "fitness.training-session-editor.save"
+    static let addExerciseButton = "fitness.exercise.add"
+    static let exerciseRow = "fitness.exercise.row"
+    static let exerciseNameLabel = "fitness.exercise-editor.name-label"
+    static let exerciseSetsLabel = "fitness.exercise-editor.sets-label"
+    static let exerciseRepsLabel = "fitness.exercise-editor.reps-label"
+    static let exerciseWeightLabel = "fitness.exercise-editor.weight-label"
+    static let exerciseNameField = "fitness.exercise-editor.name"
+    static let exerciseSetsField = "fitness.exercise-editor.sets"
+    static let exerciseRepsField = "fitness.exercise-editor.reps"
+    static let exerciseWeightField = "fitness.exercise-editor.weight"
+    static let exerciseSaveButton = "fitness.exercise-editor.save"
+    static let snapshotButton = "fitness.snapshot.create"
+    static let snapshotReport = "fitness.snapshot.report"
+    static let snapshotExercise = "fitness.snapshot.exercise"
+    static let snapshotProgress = "fitness.snapshot.progress"
+}
+

@@ -121,6 +121,20 @@ final class AssetModelE2ETests: FinanceUITestCase {
         detail.editPriceButton.requireExistence()
     }
 
+    func testTappingExpandedAssetCardCollapsesActionsAndDetails() {
+        let portfolio = AssetModelPortfolioScreen(application: financeApp)
+        portfolio.openAddAsset().create(code: "TOGGLE", name: "Toggle Asset", currency: "VND")
+        let detail = portfolio.openAsset(code: "TOGGLE")
+        detail.addUnitsButton.requireExistence()
+        detail.code.requireExistence()
+
+        portfolio.assetCard(code: "TOGGLE").tapWhenHittable()
+
+        XCTAssertTrue(detail.addUnitsButton.waitForNonExistence(timeout: 4))
+        XCTAssertTrue(detail.code.waitForNonExistence(timeout: 4))
+        portfolio.assetCard(code: "TOGGLE").requireExistence()
+    }
+
     func testAccessibilityContractsExposeLabelsForSummaryAndAssetActions() {
         let portfolio = AssetModelPortfolioScreen(application: financeApp)
         portfolio.summaryTotalVND.requireExistence()

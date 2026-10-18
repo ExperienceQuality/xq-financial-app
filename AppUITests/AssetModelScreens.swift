@@ -73,7 +73,7 @@ struct AssetModelPortfolioScreen: ScreenObject {
         let card = assetCard(code: code)
         if !card.exists {
             assetCardContaining(code: code).tapWhenHittable()
-        } else {
+        } else if (card.value as? String) != "expanded" {
             card.tapWhenHittable()
         }
         return AssetModelDetailScreen(application: application)

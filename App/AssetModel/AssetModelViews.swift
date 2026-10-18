@@ -77,7 +77,7 @@ struct AssetModelRootView: View {
                     } else {
                         ForEach(store.snapshot.assets) { asset in
                             Button {
-                                selectedAssetID = asset.id
+                                selectedAssetID = selectedAssetID == asset.id ? nil : asset.id
                             } label: {
                                 AssetModelRow(
                                     asset: asset,

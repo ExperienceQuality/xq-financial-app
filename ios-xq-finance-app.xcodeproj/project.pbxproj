@@ -49,6 +49,7 @@
 		9AE911466CD6BCDE9BE2FDB1 /* KeychainPortfolioSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C00B059C3B262781C3C203A /* KeychainPortfolioSnapshot.swift */; };
 		A5D5554490584F6FA57D424C /* SnapshotMaintainedProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8C88E7222BD5D3AC928A4F /* SnapshotMaintainedProgressTests.swift */; };
 		A9A07FC67A3BDA4D0782FF09 /* TestApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D936B784B8958FD1B7B4C3 /* TestApplication.swift */; };
+		AE6778CFA22DE43D6EB0404C /* AssetDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2A124B176A392B9BA8F4A2 /* AssetDeletionTests.swift */; };
 		B14D22F9FA86F29154195E4D /* RoutineEditorScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426782CD3DE32D0B7BB431AE /* RoutineEditorScreen.swift */; };
 		B1C8ACBC93FE8AFCFE61CBE0 /* XQAccessibilityIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55DCABEC2C9E80108AA07E1 /* XQAccessibilityIdentifier.swift */; };
 		B343746F0BA6B6455074F73A /* RoutineListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0881CFB27014592EBC7A07 /* RoutineListScreen.swift */; };
@@ -97,7 +98,7 @@
 
 /* Begin PBXFileReference section */
 		0167E525C970344BD56D305A /* FitnessAccessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessAccessibility.swift; sourceTree = "<group>"; };
-		02AF278EAC6A763ED2B8B48D /* ios-xq-finance-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-xq-finance-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02AF278EAC6A763ED2B8B48D /* ios-xq-finance-app.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "ios-xq-finance-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E2A592436C645AACC0D4A2 /* FinanceAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceAsset.swift; sourceTree = "<group>"; };
 		0329BE508A08A08ACC8274EC /* ExerciseEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditorView.swift; sourceTree = "<group>"; };
 		0B93E2F6180F83D80D7BE34B /* TransactionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRow.swift; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 		4B9F872A821D31426D5C0DB9 /* AssetDeckNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigationTests.swift; sourceTree = "<group>"; };
 		51DDD35EE0AA748D70871B6B /* ExerciseEditorValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditorValidationTests.swift; sourceTree = "<group>"; };
 		548A54E553BC01D61089FBEF /* AssetModelE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModelE2ETests.swift; sourceTree = "<group>"; };
+		5B2A124B176A392B9BA8F4A2 /* AssetDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionTests.swift; sourceTree = "<group>"; };
 		613175C0AB73151BDF098976 /* SwipeDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDirection.swift; sourceTree = "<group>"; };
 		6268B01F323E61B393EA04EA /* EmptyPortfolioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPortfolioView.swift; sourceTree = "<group>"; };
 		65301295CAF4E83E3F5C85DE /* ExchangeRateEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateEditorView.swift; sourceTree = "<group>"; };
@@ -138,10 +140,10 @@
 		7845F28C20A4AAFC233A1CC3 /* XQPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XQPalette.swift; sourceTree = "<group>"; };
 		7C00B059C3B262781C3C203A /* KeychainPortfolioSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainPortfolioSnapshot.swift; sourceTree = "<group>"; };
 		810F592D90DDB2F41D38015B /* FitnessRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessRouter.swift; sourceTree = "<group>"; };
-		812300C42A31FA8950FD2845 /* ios-xq-finance-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ios-xq-finance-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		812300C42A31FA8950FD2845 /* ios-xq-finance-appUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "ios-xq-finance-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8282BAEF16489B1F731B6981 /* AssetCurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCurrency.swift; sourceTree = "<group>"; };
 		87DF3D936B93A7A9776F20CD /* ExchangeRateSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRateSheet.swift; sourceTree = "<group>"; };
-		905B9071D381918D7C83A1AE /* FitnessCore */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FitnessCore; sourceTree = SOURCE_ROOT; };
+		905B9071D381918D7C83A1AE /* FitnessCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FitnessCore; path = FitnessCore; sourceTree = SOURCE_ROOT; };
 		977562C60332D763275DC841 /* CurrencyToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyToggleView.swift; sourceTree = "<group>"; };
 		9D4307A1E9B08BFF8BAD80C1 /* SuperAppContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperAppContractTests.swift; sourceTree = "<group>"; };
 		9D74C9424D6ADE62CEE8893E /* PortfolioSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioSnapshot.swift; sourceTree = "<group>"; };
@@ -158,10 +160,10 @@
 		CEC87E882799EE91D19ABC23 /* PersistenceSmokeTestRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceSmokeTestRunner.swift; sourceTree = "<group>"; };
 		D6D936B784B8958FD1B7B4C3 /* TestApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestApplication.swift; sourceTree = "<group>"; };
 		DA4A4D69C11F55FF32B13079 /* AssetDeckNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeckNavigation.swift; sourceTree = "<group>"; };
-		DB8E07A435A0CCDD09E9729F /* ios-xq-finance-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ios-xq-finance-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB8E07A435A0CCDD09E9729F /* ios-xq-finance-appTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = "ios-xq-finance-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE2628BB9C63DAC245D5C6B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9C531B8CEE015148E2BACCC /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
-		EB4A4168611A9793B9D509BB /* FinanceCore */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FinanceCore; sourceTree = SOURCE_ROOT; };
+		EB4A4168611A9793B9D509BB /* FinanceCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FinanceCore; path = FinanceCore; sourceTree = SOURCE_ROOT; };
 		EB99E56FF55A154FD0E9916C /* AddAssetSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAssetSheet.swift; sourceTree = "<group>"; };
 		EF0AFB7EE7CF7489E2CE47E5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -232,6 +234,7 @@
 		44C858BCE642B75176323C8D /* AppUITests */ = {
 			isa = PBXGroup;
 			children = (
+				5B2A124B176A392B9BA8F4A2 /* AssetDeletionTests.swift */,
 				548A54E553BC01D61089FBEF /* AssetModelE2ETests.swift */,
 				9E68A477F094E63391EFD533 /* AssetModelScreens.swift */,
 				51DDD35EE0AA748D70871B6B /* ExerciseEditorValidationTests.swift */,
@@ -445,10 +448,12 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					46C4D7ECF546EEA0070B247C = {
+						DevelopmentTeam = T99X93V7Y2;
 						ProvisioningStyle = Automatic;
 						TestTargetID = C27FCCEB6FC4AC26D427F0C9;
 					};
 					C27FCCEB6FC4AC26D427F0C9 = {
+						DevelopmentTeam = T99X93V7Y2;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -556,6 +561,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE6778CFA22DE43D6EB0404C /* AssetDeletionTests.swift in Sources */,
 				E1428E9CB0F1778B8498E0A9 /* AssetModelE2ETests.swift in Sources */,
 				2F76FA0DE387F826D99FA374 /* AssetModelScreens.swift in Sources */,
 				F5B1E6FC5101F7FA8C058331 /* ExerciseEditorValidationTests.swift in Sources */,
@@ -597,7 +603,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = T99X93V7Y2;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -761,7 +766,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = T99X93V7Y2;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

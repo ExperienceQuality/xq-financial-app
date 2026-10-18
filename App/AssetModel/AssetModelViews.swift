@@ -85,6 +85,7 @@ struct AssetModelRootView: View {
                                 )
                             }
                             .buttonStyle(.plain)
+                            .accessibilityValue(selectedAssetID == asset.id ? "expanded" : "collapsed")
                             .accessibilityIdentifier("\(FinanceAccessibility.assetCard).\(asset.code)")
 
                             if selectedAssetID == asset.id {

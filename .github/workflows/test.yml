@@ -76,7 +76,6 @@ jobs:
       - name: Run UI tests
         env:
           IOS_SIMULATOR_NAME: iPhone 16
-          IOS_SIMULATOR_OS: 18.5
         run: ./scripts/run-ui-tests.sh
 
       - name: Upload UI-test result

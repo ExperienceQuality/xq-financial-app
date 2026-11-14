@@ -8,6 +8,7 @@ struct FitnessRootView: View {
     @State private var router = FitnessRouter()
     @State private var isImporting = false
     @State private var importStatus: FitnessImportStatus?
+    @State private var didApplyImportFixture = false
 
     var body: some View {
         @Bindable var router = router
@@ -75,6 +76,20 @@ struct FitnessRootView: View {
                     .accessibilityIdentifier(SuperAppAccessibility.fitnessImportStatus)
             }
         }
+        .onAppear(perform: applyUITestImportFixtureIfRequested)
+    }
+
+    /// UI-test-only seam (D8 / CHAR-02). Requires `--xq-ui-testing` plus
+    /// `--xq-fitness-import-fixture` / path. Production launches never set these.
+    private func applyUITestImportFixtureIfRequested() {
+        guard !didApplyImportFixture,
+              let fixtureURL = FitnessImportTestHook.fixtureURL(
+                arguments: CommandLine.arguments
+              ) else {
+            return
+        }
+        didApplyImportFixture = true
+        handleImport(.success(fixtureURL))
     }
 
     private func handleImport(_ result: Result<URL, any Error>) {
@@ -115,6 +130,24 @@ struct FitnessRootView: View {
 private struct FitnessImportStatus {
     let message: String
     let isError: Bool
+}
+
+enum FitnessImportTestHook {
+    static let fixtureArgument = "--xq-fitness-import-fixture"
+
+    static func fixtureURL(arguments: [String]) -> URL? {
+        guard arguments.contains("--xq-ui-testing") else { return nil }
+        if let inline = arguments.first(where: { $0.hasPrefix("\(fixtureArgument)=") }) {
+            let path = String(inline.dropFirst(fixtureArgument.count + 1))
+            return path.isEmpty ? nil : URL(fileURLWithPath: path)
+        }
+        guard let index = arguments.firstIndex(of: fixtureArgument),
+              arguments.index(after: index) < arguments.endIndex else {
+            return nil
+        }
+        let path = arguments[arguments.index(after: index)]
+        return path.isEmpty ? nil : URL(fileURLWithPath: path)
+    }
 }
 
 private struct RoutineListView: View {

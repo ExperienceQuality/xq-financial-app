@@ -25,6 +25,18 @@ The script resolves the committed package pins, uses deterministic build and
 result directories beneath `build/`, and sets `CODE_SIGNING_ALLOWED=NO` and
 `CODE_SIGNING_REQUIRED=NO`.
 
+That scheme includes `AppTests` only — not the local Swift package suites.
+
+## Package (FinanceCore / FitnessCore)
+
+```bash
+./scripts/run-package-tests.sh
+```
+
+Runs `swift test --package-path FinanceCore` then
+`swift test --package-path FitnessCore` (macOS 14+ host; no simulator).
+CI's unit job runs this before app unit tests so package failures fail the job.
+
 ## Build
 
 ```bash

@@ -77,9 +77,13 @@ targets:
           - PortfolioScreen.swift
           - PriceEditorScreen.swift
           - SheetValidationTests.swift
+          - Fixtures
       - App/XQAccessibilityIdentifier.swift
       - App/FitnessAccessibility.swift
       - App/SuperAppAccessibility.swift
+    resources:
+      - path: AppUITests/Fixtures
+        type: folder
     dependencies:
       - target: ios-xq-finance-app
       - package: XQXCUITestSupport

@@ -218,25 +218,34 @@ private struct BootstrapFailureView: View {
     let retry: () -> Void
 
     var body: some View {
-        ContentUnavailableView {
-            Label(title, systemImage: "externaldrive.badge.exclamationmark")
-        } description: {
-            Text(message)
-        } actions: {
+        VStack(spacing: 16) {
+            ContentUnavailableView {
+                Label(title, systemImage: "externaldrive.badge.exclamationmark")
+            } description: {
+                Text(message)
+            }
+
             Button("Retry", action: retry)
                 .buttonStyle(.borderedProminent)
                 .accessibilityIdentifier(retryIdentifier)
         }
         .padding()
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(failureIdentifier)
     }
 }
 
 enum FinanceBootstrap {
+    /// UI-test-only seam (D8 / CHAR-03). Never passed in production launches.
+    static let bootstrapFailArgument = "--xq-finance-bootstrap-fail"
+
     static func make(
         arguments: [String] = CommandLine.arguments,
         fileManager: FileManager = .default
     ) -> FeatureBootstrapState<FinanceStore> {
+        if arguments.contains(bootstrapFailArgument) {
+            return .failed("Finance bootstrap forced failure for UI tests.")
+        }
         do {
             guard let applicationSupport = fileManager.urls(
                 for: .applicationSupportDirectory,
@@ -268,10 +277,16 @@ enum FinanceBootstrap {
 }
 
 enum FitnessBootstrap {
+    /// UI-test-only seam (D8 / CHAR-03). Never passed in production launches.
+    static let bootstrapFailArgument = "--xq-fitness-bootstrap-fail"
+
     static func make(
         arguments: [String] = CommandLine.arguments,
         fileManager: FileManager = .default
     ) -> FeatureBootstrapState<FitnessStore> {
+        if arguments.contains(bootstrapFailArgument) {
+            return .failed("Fitness bootstrap forced failure for UI tests.")
+        }
         do {
             guard let applicationSupport = fileManager.urls(
                 for: .applicationSupportDirectory,

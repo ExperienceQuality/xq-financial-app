@@ -129,6 +129,83 @@ final class FinanceStoreTests: XCTestCase {
         XCTAssertThrowsError(try store.send(.updateExchangeRate(0)))
         XCTAssertThrowsError(try store.send(.updateExchangeRate(.nan)))
     }
+
+    /// CHAR-05: default rate, fractional USD math, price 0, exact drain, rejects.
+    func testCharacterizationFinancialAccuracyBoundaries() throws {
+        let persistence = InMemoryFinancePersistence()
+        let store = try FinanceStore(persistence: persistence)
+        XCTAssertEqual(store.snapshot.exchangeRateUSDToVND, FinancialSnapshot.defaultExchangeRateUSDToVND)
+        XCTAssertEqual(FinancialSnapshot.defaultExchangeRateUSDToVND, 25_500)
+
+        let zeroPriceID = UUID()
+        try store.send(.createAsset(
+            id: zeroPriceID,
+            code: "ZERO",
+            name: "Zero Price",
+            currency: .usd,
+            price: 0
+        ))
+        XCTAssertEqual(store.asset(id: zeroPriceID)?.price, 0)
+        XCTAssertEqual(store.asset(id: zeroPriceID)?.valueInVND(exchangeRateUSDToVND: 25_500), 0)
+
+        XCTAssertThrowsError(
+            try store.send(.createAsset(
+                id: UUID(),
+                code: "NEG",
+                name: "Negative",
+                currency: .usd,
+                price: -1
+            ))
+        )
+        XCTAssertThrowsError(
+            try store.send(.createAsset(
+                id: UUID(),
+                code: "NAN",
+                name: "NaN",
+                currency: .usd,
+                price: .nan
+            ))
+        )
+
+        let fracID = UUID()
+        try store.send(.createAsset(
+            id: fracID,
+            code: "FRAC",
+            name: "Fractional",
+            currency: .usd,
+            price: 12.5
+        ))
+        try store.send(.addUnits(
+            assetID: fracID,
+            transactionID: UUID(),
+            occurredAt: .now,
+            units: 2.5
+        ))
+        // 12.5 * 2.5 * 25_500 = 796_875
+        XCTAssertEqual(store.snapshot.totalValueInVND, 796_875)
+
+        try store.send(.subtractUnits(
+            assetID: fracID,
+            transactionID: UUID(),
+            occurredAt: .now,
+            units: 2.5
+        ))
+        XCTAssertEqual(store.asset(id: fracID)?.totalUnits, 0)
+        XCTAssertEqual(store.snapshot.totalValueInVND, 0)
+        let savesAfterDrain = persistence.savedSnapshots.count
+
+        XCTAssertThrowsError(
+            try store.send(.subtractUnits(
+                assetID: fracID,
+                transactionID: UUID(),
+                occurredAt: .now,
+                units: 0.1
+            ))
+        ) { error in
+            XCTAssertEqual(error as? FinanceStoreError, .insufficientUnits)
+        }
+        XCTAssertEqual(persistence.savedSnapshots.count, savesAfterDrain)
+    }
 }
 
 private enum TestFailure: Error {

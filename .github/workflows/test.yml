@@ -36,6 +36,9 @@ jobs:
       - name: Generate Xcode project
         run: ./scripts/generate-project.sh
 
+      - name: Run package tests
+        run: ./scripts/run-package-tests.sh
+
       - name: Run unit tests
         run: ./scripts/run-unit-tests.sh
 

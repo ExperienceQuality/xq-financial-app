@@ -9,7 +9,7 @@ final class SuperAppContractTests: XCTestCase {
         var financeAttempts = 0
         var fitnessAttempts = 0
         let fitnessStore = try FitnessStore(persistence: InMemoryFitnessPersistence())
-        let model = SuperAppModel(
+        let container = AppDependencyContainer(
             financeLoader: {
                 financeAttempts += 1
                 return .failed("Finance unavailable")
@@ -19,6 +19,7 @@ final class SuperAppContractTests: XCTestCase {
                 return .loaded(fitnessStore)
             }
         )
+        let model = container.makeSuperAppModel()
 
         assertFailure(model.financeState, message: "Finance unavailable")
         assertLoaded(model.fitnessState, identicalTo: fitnessStore)
@@ -34,7 +35,7 @@ final class SuperAppContractTests: XCTestCase {
         var financeAttempts = 0
         var fitnessAttempts = 0
         let financeStore = try FinanceStore(persistence: InMemoryFinancePersistence())
-        let model = SuperAppModel(
+        let container = AppDependencyContainer(
             financeLoader: {
                 financeAttempts += 1
                 return .loaded(financeStore)
@@ -44,6 +45,7 @@ final class SuperAppContractTests: XCTestCase {
                 return .failed("Fitness unavailable")
             }
         )
+        let model = container.makeSuperAppModel()
 
         assertLoaded(model.financeState, identicalTo: financeStore)
         assertFailure(model.fitnessState, message: "Fitness unavailable")

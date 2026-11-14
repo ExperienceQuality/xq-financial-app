@@ -7,11 +7,11 @@ import UIKit
 
 @main
 struct XQFinanceApp: App {
-    @State private var model = SuperAppModel()
+    @State private var appCoordinator = AppDependencyContainer().makeAppCoordinator()
 
     var body: some Scene {
         WindowGroup {
-            SuperAppRootView(model: model)
+            SuperAppRootView(appCoordinator: appCoordinator)
         }
     }
 }
@@ -65,14 +65,13 @@ final class SuperAppModel {
 }
 
 struct SuperAppRootView: View {
-    let model: SuperAppModel
-    @State private var selectedTab = SuperAppTab.finance
+    @Bindable var appCoordinator: AppCoordinator
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $appCoordinator.selectedTab) {
             FinanceFeatureView(
-                state: model.financeState,
-                retry: model.retryFinance
+                state: appCoordinator.model.financeState,
+                retry: appCoordinator.model.retryFinance
             )
             .tabItem {
                 Label("Finance", systemImage: "chart.pie.fill")
@@ -81,8 +80,8 @@ struct SuperAppRootView: View {
             .tag(SuperAppTab.finance)
 
             FitnessFeatureView(
-                state: model.fitnessState,
-                retry: model.retryFitness
+                state: appCoordinator.model.fitnessState,
+                retry: appCoordinator.model.retryFitness
             )
             .tabItem {
                 Label("Fitness", systemImage: "figure.strengthtraining.traditional")

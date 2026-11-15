@@ -20,6 +20,7 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 - Live finance is Asset Model sheets/alerts. Legacy card-deck (`ContentView` / `Portfolio*` / `PortfolioStore` / Models) **deleted** (T6 / D1 after D10).
 - **D2 done:** `PersistenceSmokeTestRunner` + `scripts/verify-device-reinstall-persistence.sh` target `ProductionFinancePersistence` (DEBUG `--xq-persistence-smoke` from `XQFinanceApp.init`).
 - Target MVVM-C: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRootView` (T1). Tab coordinators on app coordinator (T2/T3 via #35). `handle(AppRoute)` is internal only (no URL scheme, D4).
+- Fitness `*EditorModel` types live in `App/Fitness/FitnessEditorViewModels.swift` as `@MainActor @Observable` (T4 / D3); `FitnessCore` has no presentation editor types. EditorModelTests live in `AppTests`.
 
 ## Testing strategy
 

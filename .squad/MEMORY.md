@@ -8,7 +8,7 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 - `App/AssetModel/AssetModelViews.swift` — live portfolio (`AssetModelRootView`).
 - `FinanceCore/`, `FitnessCore/` — SwiftUI-free domain packages.
 - `AppTests/` / `AppUITests/` — unit + UI tests (page objects). Legacy card-deck sources/tests removed in T6 (#30).
-- Epic #13 MVVM-C: characterization inventory at `docs/characterization-inventory.md`.
+- Epic #13 MVVM-C: characterization inventory at `docs/characterization-inventory.md`. Twins **#14–#31 all CLOSED** (verified 2026-11-15); **epic #13 still OPEN** (formal epic close pending).
 
 ## Conventions
 
@@ -27,7 +27,7 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 
 - Package: `./scripts/run-package-tests.sh` (`swift test` FinanceCore + FitnessCore). Wired in CI unit job (T7a).
 - App unit: `./scripts/run-unit-tests.sh` (Simulator OK). Meaningful suite: `SuperAppContractTests` + T2/T3 VM tests + package tests (legacy card-deck AppTests dropped per D1/D10).
-- UI evidence channel (**D9**): Simulator (`./scripts/run-ui-tests.sh`). Physical device remains local (delete-alert timing, optional smoke). Conflicts with `.cursor/rules/xcuitest-device.mdc` — rule text update is T7b.
+- UI evidence channel (**D9**): Simulator (`./scripts/run-ui-tests.sh`). Physical device remains local (delete-alert timing, optional smoke). Rule text in `.cursor/rules/xcuitest-device.mdc` updated under T7b.
 - Dev issue closes only when paired QA has PAN Test Architect–reviewed evidence (CI URL / xcresult).
 
 ## Lessons

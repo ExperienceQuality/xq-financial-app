@@ -1,26 +1,28 @@
 ---
-description: XCUITests must run on the plugged-in physical iPhone, never Simulator
+description: XCUITest destinations — Simulator for CI evidence (D9); physical device for local runs
 alwaysApply: true
 ---
 
-# XCUITest destination
+# XCUITest destinations (D9)
 
-When running, debugging, or suggesting XCUITests for this repo:
+## Evidence channel (CI / QA)
 
-- **Always** target the real plugged-in device named **iPhone** (iPhone 12) on this machine.
-- **Never** use `platform=iOS Simulator` for UI tests (`ios-xq-finance-app-ui-tests` / `AppUITests`).
-- Unit tests (`ios-xq-finance-app` / `AppTests`) may still use the Simulator.
-- IPA archive and device reinstall checks use **David 🥷** (iPhone Air) — see `scripts/archive-ipa.sh`.
+- **Simulator is the evidence channel for UI tests** (epic #13 **D9**).
+- Prefer `./scripts/run-ui-tests.sh` (default Simulator: iPhone 16) when gathering
+  QA evidence, CI artifacts, or xcresults for paired QA issues.
+- The GitHub Actions `ui-tests` job uses Simulator; that is the authoritative
+  evidence path for closing UI-related QA checks.
 
-## How to run
+## Local physical device
 
-Prefer the device script:
+- Local debugging and device-only checks (e.g. delete-alert timing, optional
+  persistence smoke) may target the plugged-in device named **iPhone** (iPhone 12):
 
 ```bash
 ./scripts/run-device-ui-tests.sh
 ```
 
-Or resolve UDID then pass it to `xcodebuild`:
+Or:
 
 ```bash
 DEVICE_ID="$(IOS_DEVICE_NAME=iPhone ./scripts/plugged-iphone-udid.sh)"
@@ -35,12 +37,22 @@ xcodebuild \
 
 Optional overrides: `IOS_DEVICE_NAME="iPhone"` or `IOS_DEVICE_ID=<udid>`.
 
-## Preconditions
+## Other destinations
+
+- Unit tests (`ios-xq-finance-app` / `AppTests`) use the Simulator.
+- IPA archive and device reinstall checks use **David 🥷** (iPhone Air) — see
+  `scripts/archive-ipa.sh` and `scripts/verify-device-reinstall-persistence.sh`.
+
+## Preconditions (physical device)
 
 - Cable connected, phone unlocked and trusted
 - Only one physical iPhone connected, or set `IOS_DEVICE_NAME` / `IOS_DEVICE_ID`
-- If the runner hangs after “Initiating session”, unlock the phone and dismiss any Automation / Developer Mode prompts
+- If the runner hangs after “Initiating session”, unlock the phone and dismiss any
+  Automation / Developer Mode prompts
 
 ## In Xcode
 
-Scheme: `ios-xq-finance-app-ui-tests` → destination **iPhone** (physical iPhone 12), not a Simulator.
+- **Evidence / CI parity:** scheme `ios-xq-finance-app-ui-tests` → a Simulator
+  (e.g. iPhone 16).
+- **Local device:** same scheme → **iPhone** (physical iPhone 12) when exercising
+  device-only behavior.

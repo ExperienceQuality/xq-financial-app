@@ -1,0 +1,39 @@
+---
+description: Strict SwiftUI MVVM-C contract for App/ and Core packages (epic #13)
+alwaysApply: false
+globs:
+  - App/**/*.swift
+  - FinanceCore/**/*.swift
+  - FitnessCore/**/*.swift
+  - AppTests/**/*.swift
+  - docs/mvvm-c.md
+  - scripts/check-architecture.sh
+  - .swiftlint.yml
+---
+
+# MVVM-C (XQ Finance)
+
+Follow `docs/mvvm-c.md`. This rule is opt-in via globs so it does not fight
+`xq-squad.mdc` (`alwaysApply: true`).
+
+## Do
+
+- Put feature `navigationDestination` and `.sheet(item:)` only in `*CoordinatorView.swift`.
+- Use `NavigationLink(value:)` with coordinator-owned route enums (**D6**).
+- Keep path/sheet mutations in `FitnessTabCoordinator` / `FinanceTabCoordinator`.
+- Keep packages SwiftUI-free; construct persistence in bootstrap/DI, not Views.
+- Treat accessibility IDs in `FinanceAccessibility` / `FitnessAccessibility` /
+  `SuperAppAccessibility` as **frozen** unless the task flags an ID change.
+- Prefer pure refactors: live UX stays unchanged unless the task names a UX change.
+
+## Do not
+
+- Use `NavigationLink(destination:)`.
+- Call `store.send` / `importSnapshot` or reference `ProductionFinancePersistence` /
+  `FileManager.default` / `PortfolioStore` inside `*View.swift`.
+- Introduce `@EnvironmentObject` / `@StateObject` / `ObservableObject` for app
+  feature stores/coordinators/VMs.
+- Edit the managed `AGENTS.md` block between `XQ_SQUAD_MANAGED_*` markers.
+
+Nested `NavigationStack` inside editor/sheet chrome is allowed. `#Preview` code is
+ignored by `scripts/check-architecture.sh`.

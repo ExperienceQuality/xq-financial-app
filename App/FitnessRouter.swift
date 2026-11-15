@@ -1,11 +1,4 @@
 import Foundation
-import Observation
-
-@Observable
-final class FitnessRouter {
-    var path: [FitnessRoute] = []
-    var sheet: FitnessSheetDestination?
-}
 
 enum FitnessRoute: Hashable {
     case routine(UUID)
@@ -29,5 +22,3 @@ enum FitnessSheetDestination: Identifiable, Equatable {
         }
     }
 }
-
-

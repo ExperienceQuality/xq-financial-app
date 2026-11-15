@@ -130,32 +130,32 @@ final class CharacterizationContractTests: XCTestCase {
     }
 
     func testFitnessRouterPathAndSheetAreObservable() {
-        let router = FitnessRouter()
+        let coordinator = FitnessTabCoordinator()
         let routineID = UUID()
         let dayID = UUID()
 
-        XCTAssertTrue(router.path.isEmpty)
-        XCTAssertNil(router.sheet)
+        XCTAssertTrue(coordinator.path.isEmpty)
+        XCTAssertNil(coordinator.sheet)
 
-        router.path = [.routine(routineID)]
-        XCTAssertEqual(router.path, [.routine(routineID)])
+        coordinator.path = [.routine(routineID)]
+        XCTAssertEqual(coordinator.path, [.routine(routineID)])
 
-        router.path.append(.trainingDay(routineID: routineID, dayID: dayID))
-        XCTAssertEqual(router.path.count, 2)
+        coordinator.path.append(.trainingDay(routineID: routineID, dayID: dayID))
+        XCTAssertEqual(coordinator.path.count, 2)
 
-        router.sheet = .createRoutine
-        XCTAssertEqual(router.sheet, .createRoutine)
+        coordinator.sheet = .createRoutine
+        XCTAssertEqual(coordinator.sheet, .createRoutine)
 
-        router.sheet = .exercise(routineID: routineID, dayID: dayID, exerciseID: nil)
+        coordinator.sheet = .exercise(routineID: routineID, dayID: dayID, exerciseID: nil)
         XCTAssertEqual(
-            router.sheet,
+            coordinator.sheet,
             .exercise(routineID: routineID, dayID: dayID, exerciseID: nil)
         )
 
-        router.path = []
-        router.sheet = nil
-        XCTAssertTrue(router.path.isEmpty)
-        XCTAssertNil(router.sheet)
+        coordinator.path = []
+        coordinator.sheet = nil
+        XCTAssertTrue(coordinator.path.isEmpty)
+        XCTAssertNil(coordinator.sheet)
     }
 }
 

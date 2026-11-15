@@ -2,26 +2,15 @@ import FitnessCore
 import SwiftUI
 
 struct RoutineWorkspaceView: View {
-    let store: FitnessStore
-    let router: FitnessRouter
-    let routineID: UUID
+    @Bindable var viewModel: RoutineWorkspaceViewModel
 
-    @State private var errorMessage: String?
-
-    private var routine: Routine? {
-        store.snapshot.routines
-            .first {
-                $0.id == routineID
-            }
-    }
-    
     var body: some View {
         Group {
-            if let routine {
+            if let routine = viewModel.routine {
                 List {
                     Section {
                         Button {
-                            createSnapshot()
+                            viewModel.createSnapshot()
                         } label: {
                             Label(
                                 "Snapshot Progress",
@@ -32,19 +21,12 @@ struct RoutineWorkspaceView: View {
                                 alignment: .center
                             )
                         }
-                        .buttonStyle(
-                            .borderedProminent
-                        )
-                        .accessibilityIdentifier(
-                            FitnessAccessibility.snapshotButton
-                        )
-                        
+                        .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier(FitnessAccessibility.snapshotButton)
+
                         if !routine.snapshots.isEmpty {
                             NavigationLink(
-                                value: FitnessRoute
-                                    .snapshotReport(
-                                        routineID: routineID
-                                    )
+                                value: FitnessRoute.snapshotReport(routineID: viewModel.routineID)
                             ) {
                                 Label(
                                     "Latest Comparison",
@@ -57,7 +39,7 @@ struct RoutineWorkspaceView: View {
                             "Snapshots stay on this device and compare exercise reps and weight with the previous capture."
                         )
                     }
-                    
+
                     Section("Training Sessions") {
                         if routine.days.isEmpty {
                             ContentUnavailableView {
@@ -72,57 +54,37 @@ struct RoutineWorkspaceView: View {
                             }
                         } else {
                             ForEach(
-                                routine.days
-                                    .sorted(
-                                        using: KeyPathComparator(
-                                            \.number
-                                        )
-                                    )
+                                routine.days.sorted(using: KeyPathComparator(\.number))
                             ) { day in
                                 NavigationLink(
-                                    value: FitnessRoute
-                                        .trainingDay(
-                                            routineID: routineID,
-                                            dayID: day.id
-                                        )
-                                ) {
-                                    TrainingDayRow(
-                                        day: day
+                                    value: FitnessRoute.trainingDay(
+                                        routineID: viewModel.routineID,
+                                        dayID: day.id
                                     )
+                                ) {
+                                    TrainingDayRow(day: day)
                                 }
                                 .accessibilityIdentifier(
                                     "\(FitnessAccessibility.trainingDayRow).\(day.number)"
                                 )
                                 .swipeActions {
                                     Button("Rename") {
-                                        router.sheet = .trainingSession(
-                                            routineID: routineID,
-                                            sessionID: day.id
-                                        )
+                                        viewModel.showRenameTrainingSession(day.id)
                                     }
                                     .tint(.blue)
 
-                                    Button(
-                                        "Delete",
-                                        role: .destructive
-                                    ) {
-                                        deleteTrainingSession(day)
+                                    Button("Delete", role: .destructive) {
+                                        viewModel.deleteTrainingSession(day)
                                     }
                                 }
                             }
                         }
                     }
                 }
-                .accessibilityIdentifier(
-                    FitnessAccessibility.routineWorkspace
-                )
-                .navigationTitle(
-                    routine.name
-                )
+                .accessibilityIdentifier(FitnessAccessibility.routineWorkspace)
+                .navigationTitle(routine.name)
                 .toolbar {
-                    ToolbarItem(
-                        placement: .primaryAction
-                    ) {
+                    ToolbarItem(placement: .primaryAction) {
                         addTrainingSessionButton
                     }
                 }
@@ -137,228 +99,100 @@ struct RoutineWorkspaceView: View {
             "Could Not Update Routine",
             isPresented: errorIsPresented
         ) {
-            Button(
-                "OK",
-                role: .cancel
-            ) {
-            }
+            Button("OK", role: .cancel) {}
         } message: {
-            Text(
-                errorMessage ?? "Unknown error"
-            )
+            Text(viewModel.errorMessage ?? "Unknown error")
         }
     }
 
     private var addTrainingSessionButton: some View {
         Button {
-            router.sheet = .trainingSession(
-                routineID: routineID,
-                sessionID: nil
-            )
+            viewModel.showAddTrainingSession()
         } label: {
-            Label(
-                "Add Training Session",
-                systemImage: "plus"
-            )
+            Label("Add Training Session", systemImage: "plus")
         }
-        .accessibilityIdentifier(
-            FitnessAccessibility.addTrainingSessionButton
-        )
+        .accessibilityIdentifier(FitnessAccessibility.addTrainingSessionButton)
     }
-    
+
     private var errorIsPresented: Binding<Bool> {
         Binding(
-            get: {
-                errorMessage != nil
-            },
+            get: { viewModel.errorMessage != nil },
             set: {
                 if !$0 {
-                    errorMessage = nil
+                    viewModel.errorMessage = nil
                 }
             }
         )
-    }
-    
-    private func createSnapshot() {
-        do {
-            try store
-                .send(
-                    .createSnapshot(
-                        routineID: routineID,
-                        id: UUID(),
-                        createdAt: Date()
-                    )
-                )
-            router.path
-                .append(
-                    .snapshotReport(
-                        routineID: routineID
-                    )
-                )
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    private func deleteTrainingSession(_ day: TrainingDay) {
-        do {
-            try store
-                .send(
-                    .deleteTrainingSession(
-                        routineID: routineID,
-                        sessionID: day.id
-                    )
-                )
-        } catch {
-            errorMessage = error.localizedDescription
-        }
     }
 }
 
 private struct TrainingDayRow: View {
     let day: TrainingDay
-    
+
     var body: some View {
-        HStack(
-            spacing: 12
-        ) {
-            Text(
-                day.name.prefix(
-                    3
-                ).uppercased()
-            )
-            .font(
-                .caption.bold()
-            )
-            .foregroundStyle(
-                .white
-            )
-            .frame(
-                width: 34,
-                height: 34
-            )
-            .background(
-                .blue.gradient,
-                in: Circle()
-            )
-            
-            VStack(
-                alignment: .leading,
-                spacing: 3
-            ) {
-                Text(
-                    day.name
-                )
-                .font(
-                    .headline
-                )
+        HStack(spacing: 12) {
+            Text(day.name.prefix(3).uppercased())
+                .font(.caption.bold())
+                .foregroundStyle(.white)
+                .frame(width: 34, height: 34)
+                .background(.blue.gradient, in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(day.name)
+                    .font(.headline)
                 Text(
                     day.exercises.isEmpty
-                    ? "Add exercises"
-                    : "\(day.exercises.count) exercise\(day.exercises.count == 1 ? "" : "s")"
+                        ? "Add exercises"
+                        : "\(day.exercises.count) exercise\(day.exercises.count == 1 ? "" : "s")"
                 )
-                .font(
-                    .subheadline
-                )
-                .foregroundStyle(
-                    .secondary
-                )
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             }
         }
-        .padding(
-            .vertical,
-            3
-        )
+        .padding(.vertical, 3)
     }
 }
 
 struct TrainingDayView: View {
-    let store: FitnessStore
-    let router: FitnessRouter
-    let routineID: UUID
-    let dayID: UUID
-    
-    @State private var errorMessage: String?
-    
-    private var day: TrainingDay? {
-        store.snapshot.routines
-            .first(
-                where: {
-                    $0.id == routineID
-                })?
-            .days
-            .first(
-                where: {
-                    $0.id == dayID
-                })
-    }
-    
+    @Bindable var viewModel: TrainingDayViewModel
+
     var body: some View {
         Group {
-            if let day {
+            if let day = viewModel.day {
                 List {
                     if day.exercises.isEmpty {
                         ContentUnavailableView {
-                            Label(
-                                "No Exercises",
-                                systemImage: "dumbbell"
-                            )
+                            Label("No Exercises", systemImage: "dumbbell")
                         } description: {
-                            Text(
-                                "Add the exercises planned for this training session."
-                            )
+                            Text("Add the exercises planned for this training session.")
                         } actions: {
                             addExerciseButton
                         }
                     } else {
-                        Section(
-                            "Exercises"
-                        ) {
-                            ForEach(
-                                day.exercises
-                            ) { exercise in
+                        Section("Exercises") {
+                            ForEach(day.exercises) { exercise in
                                 Button {
-                                    router.sheet = 
-                                        .exercise(
-                                            routineID: routineID,
-                                            dayID: dayID,
-                                            exerciseID: exercise.id
-                                        )
+                                    viewModel.showEditExercise(exercise.id)
                                 } label: {
-                                    ExerciseRow(
-                                        exercise: exercise
-                                    )
+                                    ExerciseRow(exercise: exercise)
                                 }
-                                .buttonStyle(
-                                    .plain
-                                )
+                                .buttonStyle(.plain)
                                 .accessibilityIdentifier(
                                     "\(FitnessAccessibility.exerciseRow).\(exercise.id.uuidString)"
                                 )
                                 .swipeActions {
-                                    Button(
-                                        "Delete",
-                                        role: .destructive
-                                    ) {
-                                        delete(
-                                            exercise
-                                        )
+                                    Button("Delete", role: .destructive) {
+                                        viewModel.deleteExercise(exercise)
                                     }
                                 }
                             }
                         }
                     }
                 }
-                .accessibilityIdentifier(
-                    FitnessAccessibility.trainingDayScreen
-                )
-                .navigationTitle(
-                    day.name
-                )
+                .accessibilityIdentifier(FitnessAccessibility.trainingDayScreen)
+                .navigationTitle(day.name)
                 .toolbar {
-                    ToolbarItem(
-                        placement: .primaryAction
-                    ) {
+                    ToolbarItem(placement: .primaryAction) {
                         addExerciseButton
                     }
                 }
@@ -373,99 +207,44 @@ struct TrainingDayView: View {
             "Could Not Update Exercise",
             isPresented: errorIsPresented
         ) {
-            Button(
-                "OK",
-                role: .cancel
-            ) {
-            }
+            Button("OK", role: .cancel) {}
         } message: {
-            Text(
-                errorMessage ?? "Unknown error"
-            )
+            Text(viewModel.errorMessage ?? "Unknown error")
         }
     }
-    
+
     private var addExerciseButton: some View {
         Button {
-            router.sheet = 
-                .exercise(
-                    routineID: routineID,
-                    dayID: dayID,
-                    exerciseID: nil
-                )
+            viewModel.showAddExercise()
         } label: {
-            Label(
-                "Add Exercise",
-                systemImage: "plus"
-            )
+            Label("Add Exercise", systemImage: "plus")
         }
-        .accessibilityIdentifier(
-            FitnessAccessibility.addExerciseButton
-        )
+        .accessibilityIdentifier(FitnessAccessibility.addExerciseButton)
     }
-    
+
     private var errorIsPresented: Binding<Bool> {
         Binding(
-            get: {
-                errorMessage != nil
-            },
+            get: { viewModel.errorMessage != nil },
             set: {
                 if !$0 {
-                    errorMessage = nil
+                    viewModel.errorMessage = nil
                 }
             }
         )
-    }
-    
-    private func delete(
-        _ exercise: Exercise
-    ) {
-        do {
-            try store
-                .send(
-                    .deleteExercise(
-                        routineID: routineID,
-                        dayID: dayID,
-                        exerciseID: exercise.id
-                    )
-                )
-        } catch {
-            errorMessage = error.localizedDescription
-        }
     }
 }
 
 private struct ExerciseRow: View {
     let exercise: Exercise
-    
+
     var body: some View {
-        VStack(
-            alignment: .leading,
-    spacing: 5
-        ) {
-            Text(
-        exercise.name
-            )
-            .font(
-                .headline
-            )
-            Text(
-                "\(exercise.sets) sets · \(exercise.reps) reps · \(exercise.weightKg.formatted()) kg"
-            )
-            .font(
-                .subheadline.monospacedDigit()
-            )
-            .foregroundStyle(
-                .secondary
-            )
+        VStack(alignment: .leading, spacing: 4) {
+            Text(exercise.name)
+                .font(.headline)
+            Text("\(exercise.sets) × \(exercise.reps) @ \(exercise.weightKg.formatted()) kg")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
-        .frame(
-            maxWidth: .infinity,
-            alignment: .leading
-        )
-        .contentShape(
-            Rectangle()
-        )
+        .padding(.vertical, 2)
     }
 }
-

@@ -1,57 +1,20 @@
 import FinanceCore
 import SwiftUI
 
-private enum AssetModelSheet: Identifiable {
-    case addAsset
-    case editPrice(UUID)
-    case units(UUID, UnitOperation)
-    case exchangeRate
-
-    var id: String {
-        switch self {
-        case .addAsset: "add-asset"
-        case .editPrice(let id): "edit-price-\(id)"
-        case let .units(id, operation): "units-\(id)-\(operation.rawValue)"
-        case .exchangeRate: "exchange-rate"
-        }
-    }
-}
-
-private enum AssetModelAlert: Identifiable {
-    case delete(FinancialAsset)
-    case error(String)
-
-    var id: String {
-        switch self {
-        case .delete(let asset): "delete-\(asset.id.uuidString)"
-        case .error(let message): "error-\(message)"
-        }
-    }
-}
-
 struct AssetModelRootView: View {
-    let store: FinanceStore
-
-    @State private var selectedAssetID: UUID?
-    @State private var sheet: AssetModelSheet?
-    @State private var activeAlert: AssetModelAlert?
-
-    private var selectedAsset: FinancialAsset? {
-        guard let selectedAssetID else { return nil }
-        return store.asset(id: selectedAssetID)
-    }
+    @Bindable var viewModel: FinancePortfolioViewModel
 
     var body: some View {
         NavigationStack {
             List {
                 PortfolioHeaderSection(
-                    totalValueInVND: store.snapshot.totalValueInVND,
-                    exchangeRateUSDToVND: store.snapshot.exchangeRateUSDToVND,
-                    onEditExchangeRate: { sheet = .exchangeRate }
+                    totalValueInVND: viewModel.store.snapshot.totalValueInVND,
+                    exchangeRateUSDToVND: viewModel.store.snapshot.exchangeRateUSDToVND,
+                    onEditExchangeRate: { viewModel.showExchangeRate() }
                 )
 
                 Section("Assets") {
-                    if store.snapshot.assets.isEmpty {
+                    if viewModel.store.snapshot.assets.isEmpty {
                         VStack(spacing: 12) {
                             Image(systemName: "chart.pie")
                                 .font(.largeTitle)
@@ -63,7 +26,7 @@ struct AssetModelRootView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
-                            Button("Add Asset") { sheet = .addAsset }
+                            Button("Add Asset") { viewModel.showAddAsset() }
                                 .buttonStyle(.borderedProminent)
                                 .accessibilityIdentifier(FinanceAccessibility.addAsset)
 
@@ -75,39 +38,41 @@ struct AssetModelRootView: View {
                         }
                         .accessibilityIdentifier(FinanceAccessibility.emptyState)
                     } else {
-                        ForEach(store.snapshot.assets) { asset in
+                        ForEach(viewModel.store.snapshot.assets) { asset in
                             Button {
-                                selectedAssetID = selectedAssetID == asset.id ? nil : asset.id
+                                viewModel.toggleSelection(assetID: asset.id)
                             } label: {
                                 AssetModelRow(
                                     asset: asset,
-                                    isSelected: selectedAssetID == asset.id
+                                    isSelected: viewModel.selectedAssetID == asset.id
                                 )
                             }
                             .buttonStyle(.plain)
-                            .accessibilityValue(selectedAssetID == asset.id ? "expanded" : "collapsed")
+                            .accessibilityValue(
+                                viewModel.selectedAssetID == asset.id ? "expanded" : "collapsed"
+                            )
                             .accessibilityIdentifier("\(FinanceAccessibility.assetCard).\(asset.code)")
 
-                            if selectedAssetID == asset.id {
+                            if viewModel.selectedAssetID == asset.id {
                                 AssetModelQuickActions(
                                     asset: asset,
-                                    onEditPrice: { sheet = .editPrice(asset.id) },
-                                    onAddUnits: { sheet = .units(asset.id, .add) },
-                                    onSubtractUnits: { sheet = .units(asset.id, .subtract) },
-                                    onDelete: { requestDeleteConfirmation(for: asset) }
+                                    onEditPrice: { viewModel.showEditPrice(assetID: asset.id) },
+                                    onAddUnits: { viewModel.showAddUnits(assetID: asset.id) },
+                                    onSubtractUnits: { viewModel.showSubtractUnits(assetID: asset.id) },
+                                    onDelete: { viewModel.requestDelete(asset) }
                                 )
                             }
                         }
                     }
                 }
 
-                if let asset = selectedAsset {
+                if let asset = viewModel.selectedAsset {
                     AssetModelDetailSection(
                         asset: asset,
-                        onEditPrice: { sheet = .editPrice(asset.id) },
-                        onAddUnits: { sheet = .units(asset.id, .add) },
-                        onSubtractUnits: { sheet = .units(asset.id, .subtract) },
-                        onDelete: { requestDeleteConfirmation(for: asset) }
+                        onEditPrice: { viewModel.showEditPrice(assetID: asset.id) },
+                        onAddUnits: { viewModel.showAddUnits(assetID: asset.id) },
+                        onSubtractUnits: { viewModel.showSubtractUnits(assetID: asset.id) },
+                        onDelete: { viewModel.requestDelete(asset) }
                     )
                 }
             }
@@ -116,57 +81,13 @@ struct AssetModelRootView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        sheet = .addAsset
+                        viewModel.showAddAsset()
                     } label: {
                         Label("Add Asset", systemImage: "plus")
                     }
                     .accessibilityIdentifier(FinanceAccessibility.addAsset)
                 }
             }
-        }
-        .sheet(item: $sheet) { destination in
-            switch destination {
-            case .addAsset:
-                AssetEditorView(store: store)
-            case .editPrice(let assetID):
-                PriceEditorView(store: store, assetID: assetID)
-            case let .units(assetID, operation):
-                UnitEditorView(store: store, assetID: assetID, operation: operation)
-            case .exchangeRate:
-                AssetModelExchangeRateEditorView(store: store)
-            }
-        }
-        .alert(item: $activeAlert) { alert in
-            switch alert {
-            case .delete(let asset):
-                return Alert(
-                    title: Text("Delete asset?"),
-                    message: Text("This removes \(asset.code) and its unit history."),
-                    primaryButton: .destructive(Text("Delete Asset")) {
-                        do {
-                            try store.send(.deleteAsset(assetID: asset.id))
-                            selectedAssetID = nil
-                        } catch {
-                            activeAlert = .error(error.financeMessage)
-                        }
-                    },
-                    secondaryButton: .cancel(Text("Cancel"))
-                )
-            case .error(let message):
-                return Alert(
-                    title: Text("Could Not Save"),
-                    message: Text(message),
-                    dismissButton: .cancel(Text("OK"))
-                )
-            }
-        }
-    }
-
-    private func requestDeleteConfirmation(for asset: FinancialAsset) {
-        // Present after the initiating touch completes. This avoids the physical-device
-        // touch-up being delivered to the newly presented alert and dismissing it.
-        DispatchQueue.main.async {
-            activeAlert = .delete(asset)
         }
     }
 }
@@ -352,35 +273,30 @@ private struct AssetModelDetailSection: View {
     }
 }
 
-private struct AssetEditorView: View {
+struct AssetEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    let store: FinanceStore
-    @State private var code = ""
-    @State private var name = ""
-    @State private var currency = FinancialCurrency.usd
-    @State private var price = "0"
-    @State private var errorMessage: String?
+    @Bindable var viewModel: AssetEditorViewModel
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Asset") {
-                    TextField("Code", text: $code)
+                    TextField("Code", text: $viewModel.code)
                         .textInputAutocapitalization(.characters)
                         .accessibilityIdentifier(FinanceAccessibility.codeField)
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $viewModel.name)
                         .accessibilityIdentifier(FinanceAccessibility.nameField)
-                    Picker("Currency", selection: $currency) {
+                    Picker("Currency", selection: $viewModel.currency) {
                         ForEach(FinancialCurrency.allCases) { value in
                             Text(value.rawValue).tag(value)
                         }
                     }
                     .accessibilityIdentifier(FinanceAccessibility.currencyPicker)
-                    TextField("Price", text: $price)
+                    TextField("Price", text: $viewModel.price)
                         .keyboardType(.decimalPad)
                         .accessibilityIdentifier(FinanceAccessibility.priceField)
                 }
-                ValidationMessage(message: errorMessage)
+                ValidationMessage(message: viewModel.errorMessage)
             }
             .navigationTitle("New Asset")
             .navigationBarTitleDisplayMode(.inline)
@@ -389,43 +305,27 @@ private struct AssetEditorView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button("Save", action: viewModel.save)
                         .accessibilityIdentifier(FinanceAccessibility.assetSave)
                 }
             }
         }
     }
-
-    private func save() {
-        guard let parsedPrice = price.decimalInput else {
-            errorMessage = FinanceStoreError.assetPriceInvalid.errorDescription
-            return
-        }
-        do {
-            try store.send(.createAsset(
-                id: UUID(), code: code, name: name, currency: currency, price: parsedPrice
-            ))
-            dismiss()
-        } catch { errorMessage = error.financeMessage }
-    }
 }
 
-private struct PriceEditorView: View {
+struct PriceEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    let store: FinanceStore
-    let assetID: UUID
-    @State private var price = ""
-    @State private var errorMessage: String?
+    @Bindable var viewModel: PriceEditorViewModel
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Current Price") {
-                    TextField("Price", text: $price)
+                    TextField("Price", text: $viewModel.price)
                         .keyboardType(.decimalPad)
                         .accessibilityIdentifier(FinanceAccessibility.priceEditorField)
                 }
-                ValidationMessage(message: errorMessage)
+                ValidationMessage(message: viewModel.errorMessage)
             }
             .navigationTitle("Edit Price")
             .navigationBarTitleDisplayMode(.inline)
@@ -434,110 +334,60 @@ private struct PriceEditorView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button("Save", action: viewModel.save)
                         .accessibilityIdentifier(FinanceAccessibility.priceEditorSave)
                 }
             }
-            .onAppear { price = store.asset(id: assetID)?.price.plainNumber ?? "" }
         }
-    }
-
-    private func save() {
-        guard let asset = store.asset(id: assetID), let value = price.decimalInput else {
-            errorMessage = FinanceStoreError.assetPriceInvalid.errorDescription
-            return
-        }
-        do {
-            try store.send(.updateAsset(
-                assetID: asset.id,
-                code: asset.code,
-                name: asset.name,
-                currency: asset.currency,
-                price: value
-            ))
-            dismiss()
-        } catch { errorMessage = error.financeMessage }
     }
 }
 
-private struct UnitEditorView: View {
+struct UnitEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    let store: FinanceStore
-    let assetID: UUID
-    let operation: UnitOperation
-    @State private var amount = ""
-    @State private var errorMessage: String?
+    @Bindable var viewModel: UnitEditorViewModel
 
     var body: some View {
         NavigationStack {
             Form {
-                Section(operation == .add ? "Add Units" : "Subtract Units") {
-                    TextField("Units", text: $amount)
+                Section(viewModel.operation == .add ? "Add Units" : "Subtract Units") {
+                    TextField("Units", text: $viewModel.amount)
                         .keyboardType(.decimalPad)
                         .accessibilityIdentifier(FinanceAccessibility.unitAmountField)
-                    if operation == .subtract, let asset = store.asset(id: assetID) {
-                        Text("Available: \(asset.totalUnits.unitsDisplay) units")
+                    if viewModel.operation == .subtract, let available = viewModel.availableUnits {
+                        Text("Available: \(available.unitsDisplay) units")
                             .foregroundStyle(.secondary)
                     }
                 }
-                ValidationMessage(message: errorMessage)
+                ValidationMessage(message: viewModel.errorMessage)
             }
-            .navigationTitle(operation == .add ? "Add Units" : "Subtract Units")
+            .navigationTitle(viewModel.operation == .add ? "Add Units" : "Subtract Units")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button("Save", action: viewModel.save)
                         .accessibilityIdentifier(FinanceAccessibility.unitSave)
                 }
             }
         }
     }
-
-    private func save() {
-        guard let value = amount.decimalInput else {
-            errorMessage = FinanceStoreError.unitsInvalid.errorDescription
-            return
-        }
-        do {
-            let transactionID = UUID()
-            if operation == .add {
-                try store.send(.addUnits(
-                    assetID: assetID,
-                    transactionID: transactionID,
-                    occurredAt: .now,
-                    units: value
-                ))
-            } else {
-                try store.send(.subtractUnits(
-                    assetID: assetID,
-                    transactionID: transactionID,
-                    occurredAt: .now,
-                    units: value
-                ))
-            }
-            dismiss()
-        } catch { errorMessage = error.financeMessage }
-    }
 }
 
-private struct AssetModelExchangeRateEditorView: View {
+struct AssetModelExchangeRateEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    let store: FinanceStore
-    @State private var rate = ""
-    @State private var errorMessage: String?
+    @Bindable var viewModel: ExchangeRateEditorViewModel
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("1 USD in VND") {
-                    TextField("Exchange Rate", text: $rate)
+                    TextField("Exchange Rate", text: $viewModel.rate)
                         .keyboardType(.decimalPad)
                         .accessibilityIdentifier(FinanceAccessibility.exchangeRateField)
                 }
-                ValidationMessage(message: errorMessage)
+                ValidationMessage(message: viewModel.errorMessage)
             }
             .navigationTitle("Exchange Rate")
             .navigationBarTitleDisplayMode(.inline)
@@ -546,23 +396,11 @@ private struct AssetModelExchangeRateEditorView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button("Save", action: viewModel.save)
                         .accessibilityIdentifier(FinanceAccessibility.exchangeRateSave)
                 }
             }
-            .onAppear { rate = store.snapshot.exchangeRateUSDToVND.plainNumber }
         }
-    }
-
-    private func save() {
-        guard let value = rate.decimalInput else {
-            errorMessage = FinanceStoreError.exchangeRateInvalid.errorDescription
-            return
-        }
-        do {
-            try store.send(.updateExchangeRate(value))
-            dismiss()
-        } catch { errorMessage = error.financeMessage }
     }
 }
 
@@ -575,64 +413,4 @@ private func ValidationMessage(message: String?) -> some View {
                 .accessibilityIdentifier(FinanceAccessibility.validationError)
         }
     }
-}
-
-private extension Error {
-    var financeMessage: String {
-        (self as? LocalizedError)?.errorDescription ?? localizedDescription
-    }
-}
-
-private extension String {
-    var decimalInput: Double? {
-        Double(
-            trimmingCharacters(in: .whitespacesAndNewlines)
-                .replacingOccurrences(of: ",", with: ".")
-        )
-    }
-}
-
-private extension Double {
-    var plainNumber: String {
-        formatted(.number.grouping(.never).precision(.fractionLength(0...6)))
-    }
-
-    var unitsDisplay: String { plainNumber }
-
-    var signedUnitsDisplay: String {
-        "\(self >= 0 ? "+" : "−")\(abs(self).unitsDisplay)"
-    }
-
-    var vndDisplay: String {
-        Self.vndFormatter.string(from: NSNumber(value: self)) ?? "₫0"
-    }
-
-    func nativeDisplay(currency: FinancialCurrency) -> String {
-        switch currency {
-        case .usd:
-            Self.usdFormatter.string(from: NSNumber(value: self)) ?? "$0"
-        case .vnd:
-            vndDisplay
-        }
-    }
-
-    private static let vndFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.currencySymbol = "₫"
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
-        return formatter
-    }()
-
-    private static let usdFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 0
-        return formatter
-    }()
 }

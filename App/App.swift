@@ -71,7 +71,8 @@ struct SuperAppRootView: View {
         TabView(selection: $appCoordinator.selectedTab) {
             FinanceFeatureView(
                 state: appCoordinator.model.financeState,
-                retry: appCoordinator.model.retryFinance
+                retry: appCoordinator.model.retryFinance,
+                coordinator: appCoordinator.financeCoordinator
             )
             .tabItem {
                 Label("Finance", systemImage: "chart.pie.fill")
@@ -81,7 +82,8 @@ struct SuperAppRootView: View {
 
             FitnessFeatureView(
                 state: appCoordinator.model.fitnessState,
-                retry: appCoordinator.model.retryFitness
+                retry: appCoordinator.model.retryFitness,
+                coordinator: appCoordinator.fitnessCoordinator
             )
             .tabItem {
                 Label("Fitness", systemImage: "figure.strengthtraining.traditional")
@@ -168,13 +170,14 @@ private extension UIView {
 private struct FinanceFeatureView: View {
     let state: FeatureBootstrapState<FinanceStore>
     let retry: () -> Void
+    let coordinator: FinanceTabCoordinator
 
     var body: some View {
         switch state {
         case .loading:
             ProgressView("Loading Finance")
         case .loaded(let store):
-            AssetModelRootView(store: store)
+            FinanceCoordinatorView(store: store, coordinator: coordinator)
         case .failed(let message):
             BootstrapFailureView(
                 title: "Financial Data Unavailable",
@@ -190,13 +193,14 @@ private struct FinanceFeatureView: View {
 private struct FitnessFeatureView: View {
     let state: FeatureBootstrapState<FitnessStore>
     let retry: () -> Void
+    let coordinator: FitnessTabCoordinator
 
     var body: some View {
         switch state {
         case .loading:
             ProgressView("Loading Fitness")
         case .loaded(let store):
-            FitnessRootView(store: store)
+            FitnessCoordinatorView(store: store, coordinator: coordinator)
         case .failed(let message):
             BootstrapFailureView(
                 title: "Fitness Data Unavailable",

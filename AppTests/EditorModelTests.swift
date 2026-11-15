@@ -1,7 +1,8 @@
-import Foundation
+import FitnessCore
 import XCTest
-@testable import FitnessCore
+@testable import ios_xq_finance_app
 
+@MainActor
 final class EditorModelTests: XCTestCase {
     func testRoutineEditorSaveCreatesRoutineAndClearsValidation() throws {
         let store = try FitnessStore(persistence: InMemoryFitnessPersistence())
@@ -151,4 +152,3 @@ final class EditorModelTests: XCTestCase {
         return (store, routineID, dayID, exerciseID)
     }
 }
-

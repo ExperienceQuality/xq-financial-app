@@ -67,6 +67,8 @@ public protocol FinancePersisting {
     func save(_ snapshot: FinancialSnapshot) throws
 }
 
+// ADR-11 / D5: package stores stay off @MainActor in this epic so package tests
+// keep isolation flexibility. App-layer coordinators/VMs own @MainActor first.
 @Observable
 public final class FinanceStore {
     public private(set) var snapshot: FinancialSnapshot

@@ -25,6 +25,8 @@ Follow `docs/mvvm-c.md`. This rule is opt-in via globs so it does not fight
 - Treat accessibility IDs in `FinanceAccessibility` / `FitnessAccessibility` /
   `SuperAppAccessibility` as **frozen** unless the task flags an ID change.
 - Prefer pure refactors: live UX stays unchanged unless the task names a UX change.
+- Keep coordinators and ViewModels `@MainActor @Observable`. Leave package stores
+  (`FinanceStore`, `FitnessStore`) without `@MainActor` until a follow-up (ADR-11 / D5).
 
 ## Do not
 

@@ -37,9 +37,17 @@ Entry: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRo
 
 ## ViewModel rules
 
-- `@MainActor` + `@Observable` for UI-facing VMs.
+- `@MainActor` + `@Observable` for UI-facing VMs **and** coordinators (T5 / D5).
 - VMs may call `store.send` / package APIs; Views must not.
 - Selection/expand/collapse and form draft state are VM concerns; navigation is not.
+
+## `@MainActor` staging (ADR-11 / D5)
+
+- **App layer (this epic):** every coordinator and ViewModel is
+  `@MainActor @Observable` (including Fitness `*EditorModel` types after T4).
+- **Package stores (deferred):** `FinanceStore` / `FitnessStore` stay
+  `@Observable` without `@MainActor` so package tests avoid actor-isolation churn.
+  Annotating stores is a follow-up outside T5.
 
 ## Module boundaries
 
@@ -64,7 +72,8 @@ tests (T6) is a CI-contract change, not a live-UX change.
 ## Decision log pointer
 
 Epic #13 decision IDs (D1–D10) are recorded on GitHub issues / the epic decision log.
-Notable for this contract: **D6** (`NavigationLink(value:)` OK), **D7** (this doc),
+Notable for this contract: **D5** / **ADR-11** (`@MainActor` on app layer first;
+package stores later), **D6** (`NavigationLink(value:)` OK), **D7** (this doc),
 **D9** (Simulator is the UI-test evidence channel; device remains local), **D10**
 (T6 drops legacy tests only after T2/T3/T7a replacements are on CI).
 

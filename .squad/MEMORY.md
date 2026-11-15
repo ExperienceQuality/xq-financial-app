@@ -21,6 +21,7 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 - **D2 done:** `PersistenceSmokeTestRunner` + `scripts/verify-device-reinstall-persistence.sh` target `ProductionFinancePersistence` (DEBUG `--xq-persistence-smoke` from `XQFinanceApp.init`).
 - Target MVVM-C: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRootView` (T1). Tab coordinators on app coordinator (T2/T3 via #35). `handle(AppRoute)` is internal only (no URL scheme, D4).
 - Fitness `*EditorModel` types live in `App/Fitness/FitnessEditorViewModels.swift` as `@MainActor @Observable` (T4 / D3); `FitnessCore` has no presentation editor types. EditorModelTests live in `AppTests`.
+- **D5 / ADR-11 (T5):** App coordinators + ViewModels are `@MainActor @Observable`. Package stores (`FinanceStore`, `FitnessStore`) intentionally omit `@MainActor` for now (deferral noted in store sources + `docs/mvvm-c.md`).
 
 ## Testing strategy
 

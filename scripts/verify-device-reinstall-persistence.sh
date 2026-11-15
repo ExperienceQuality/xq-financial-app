@@ -26,7 +26,7 @@ launch_smoke() {
 
 restore_on_failure() {
   if [[ "${SEEDED}" == "1" ]]; then
-    log "Restoring original portfolio after failed persistence smoke run"
+    log "Restoring original financial snapshot after failed persistence smoke run"
     set +e
     launch_smoke restore
     set -e
@@ -55,7 +55,7 @@ SEEDED=1
 log "Installing the same build again without uninstalling"
 xcrun devicectl device install app --device "${DEVICE_ID}" "${APP_PATH}"
 
-log "Verifying marker survived reinstall and restoring original portfolio"
+log "Verifying marker survived reinstall and restoring original financial snapshot"
 launch_smoke verify
 SEEDED=0
 

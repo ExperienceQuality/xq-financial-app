@@ -4,9 +4,11 @@ import SwiftUI
 struct ExerciseEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var model: ExerciseEditorModel
+    let onSaved: () -> Void
 
-    init(model: ExerciseEditorModel) {
+    init(model: ExerciseEditorModel, onSaved: @escaping () -> Void) {
         _model = State(initialValue: model)
+        self.onSaved = onSaved
     }
 
     var body: some View {
@@ -83,6 +85,7 @@ struct ExerciseEditorView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         if model.save() {
+                            onSaved()
                             dismiss()
                         }
                     }

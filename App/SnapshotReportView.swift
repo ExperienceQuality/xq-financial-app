@@ -2,16 +2,11 @@ import FitnessCore
 import SwiftUI
 
 struct SnapshotReportView: View {
-    let store: FitnessStore
-    let routineID: UUID
-
-    private var report: SnapshotReport? {
-        try? store.snapshotReport(routineID: routineID)
-    }
+    let viewModel: SnapshotReportViewModel
 
     var body: some View {
         Group {
-            if let report {
+            if let report = viewModel.report {
                 List {
                     Section {
                         LabeledContent("Captured", value: report.current.createdAt.formatted(

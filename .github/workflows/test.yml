@@ -39,6 +39,17 @@ jobs:
       - name: Run package tests
         run: ./scripts/run-package-tests.sh
 
+      - name: Install SwiftLint
+        run: brew list swiftlint >/dev/null 2>&1 || brew install swiftlint
+
+      - name: Run SwiftLint (MVVM-C custom rules)
+        run: swiftlint lint --config .swiftlint.yml --strict
+
+      - name: Run architecture check
+        run: |
+          ./scripts/check-architecture.sh
+          ./scripts/check-architecture.sh --fixtures
+
       - name: Run unit tests
         run: ./scripts/run-unit-tests.sh
 

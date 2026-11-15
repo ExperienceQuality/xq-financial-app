@@ -1,0 +1,48 @@
+# Narrow MVVM-C opt-in rules only (T7b / SA §4.1). Not a full style dump.
+only_rules:
+  - custom_rules
+
+excluded:
+  - .build
+  - build
+  - .squad
+  - FinanceCore/.build
+  - FitnessCore/.build
+  # Legacy card-deck paths until T6 lands; drop these excludes after T6 merge.
+  - App/Views
+  - App/ViewModels
+  - App/Models
+  - App/Services
+  - scripts/architecture-fixtures
+
+included:
+  - App
+
+custom_rules:
+  no_navigation_link_destination:
+    name: "No NavigationLink(destination:)"
+    regex: 'NavigationLink\s*\(\s*destination\s*:'
+    message: "Use NavigationLink(value:) with coordinator-owned routes (D6). NavigationLink(destination:) is banned."
+    severity: error
+
+  navigation_destination_coordinator_only:
+    name: "navigationDestination only in coordinator containers"
+    regex: '\.navigationDestination\s*\('
+    message: "navigationDestination belongs in *CoordinatorView.swift (or an allowlisted coordinator container)."
+    included: ".*View\\.swift$"
+    excluded: ".*CoordinatorView\\.swift$"
+    severity: error
+
+  no_persistence_types_in_views:
+    name: "No persistence types in Views"
+    regex: '(ProductionFinancePersistence|FileManager\.default|PortfolioStore\.|KeychainSnapshotStore|JSONFitnessPersistence)'
+    message: "Views must not reference persistence types. Use a ViewModel/store boundary."
+    included: ".*View\\.swift$"
+    severity: error
+
+  no_store_send_in_views:
+    name: "No store.send in Views"
+    regex: 'store\.send\s*\('
+    message: "Views must not call store.send. Route intent through a ViewModel."
+    included: ".*View\\.swift$"
+    severity: error

@@ -19,7 +19,8 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 
 - Live finance is Asset Model sheets/alerts (not legacy card-deck). Legacy `ContentView` / `Portfolio*` still in tree until T6 (**D1: delete** after D10).
 - **D2:** retarget `PersistenceSmokeTestRunner` + device-reinstall script at `ProductionFinancePersistence` (T6).
-- Target MVVM-C: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRootView` (T1). Tab coordinators held on app coordinator; Finance/Fitness view extracts are T2/T3. `handle(AppRoute)` is internal only (no URL scheme, D4).
+- Target MVVM-C: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRootView` (T1). Tab coordinators on app coordinator (T2/T3 landed via #35). `handle(AppRoute)` is internal only (no URL scheme, D4).
+- Fitness `*EditorModel` types live in `App/Fitness/FitnessEditorViewModels.swift` as `@MainActor @Observable` (T4 / D3); `FitnessCore` has no presentation editor types. EditorModelTests live in `AppTests`.
 
 ## Testing strategy
 

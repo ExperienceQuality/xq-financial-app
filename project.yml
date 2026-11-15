@@ -63,20 +63,6 @@ targets:
     sources:
       - path: AppUITests
         excludes:
-          - AddAssetScreen.swift
-          - AddAssetValidationTests.swift
-          - BuyLotEditingScreen.swift
-          - BuyLotEditingTests.swift
-          - BuyLotScreen.swift
-          - CurrencyToggleHitTargetTests.swift
-          - DeductionDialogTests.swift
-          - ExchangeRateScreen.swift
-          - ExchangeRateTests.swift
-          - MultiAssetDeckTests.swift
-          - PortfolioLifecycleTests.swift
-          - PortfolioScreen.swift
-          - PriceEditorScreen.swift
-          - SheetValidationTests.swift
           - Fixtures
       - App/XQAccessibilityIdentifier.swift
       - App/FitnessAccessibility.swift

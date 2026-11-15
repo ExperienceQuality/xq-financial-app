@@ -9,6 +9,12 @@ import UIKit
 struct XQFinanceApp: App {
     @State private var appCoordinator = AppDependencyContainer().makeAppCoordinator()
 
+    init() {
+        #if DEBUG
+        PersistenceSmokeTestRunner.runIfRequested()
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             SuperAppRootView(appCoordinator: appCoordinator)

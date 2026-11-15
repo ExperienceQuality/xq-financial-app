@@ -1,7 +1,10 @@
 #if DEBUG
 import Darwin
+import FinanceCore
 import Foundation
 
+/// Local device-only persistence smoke for `scripts/verify-device-reinstall-persistence.sh`.
+/// Seeds/verifies a marker through `ProductionFinancePersistence` (CHAR-08 / D2).
 enum PersistenceSmokeTestRunner {
     private static let flag = "--xq-persistence-smoke"
     private static let seedCommand = "seed"
@@ -10,10 +13,10 @@ enum PersistenceSmokeTestRunner {
     private static let backupAccount = "reinstallPersistenceSmokeBackup"
     private static let smokeAssetID = UUID(uuidString: "5AE61D43-67EE-4C1F-8ED4-B5D5A3799825")!
     private static let smokeTransactionID = UUID(uuidString: "F3117862-9382-44A2-8407-1EAD34F70A5D")!
-    private static let smokeSymbol = "XQSMOKE"
+    private static let smokeCode = "XQSMOKE"
     private static let smokePrice = 1234.56
     private static let smokeUnits = 7.5
-    private static let smokeUnitPrice = 11.22
+    private static let smokeOccurredAt = Date(timeIntervalSince1970: 1_781_596_800) // 2026-06-16 UTC
 
     static func runIfRequested(arguments: [String] = CommandLine.arguments) {
         guard
@@ -30,7 +33,7 @@ enum PersistenceSmokeTestRunner {
         case verifyCommand:
             status = verifyAndRestore()
         case restoreCommand:
-            status = restoreOriginalPortfolio()
+            status = restoreOriginalSnapshot()
         default:
             status = 64
         }
@@ -39,60 +42,100 @@ enum PersistenceSmokeTestRunner {
     }
 
     private static func seed() -> Int32 {
-        let originalSnapshot = PortfolioStore.loadPortfolio()
-        guard let backupData = PortfolioStore.encode(originalSnapshot) else { return 65 }
-        KeychainPortfolioSnapshot.save(backupData, account: backupAccount)
+        do {
+            let context = try makeContext()
+            let original = try context.persistence.load() ?? FinancialSnapshot()
+            let backupData = try encode(original)
+            try context.keychain.save(backupData, account: backupAccount)
 
-        var snapshot = originalSnapshot
-        snapshot.assets.removeAll { $0.symbol == smokeSymbol }
-        snapshot.assets.insert(PortfolioAssetSnapshot(asset: smokeAsset), at: 0)
-        PortfolioStore.save(snapshot)
-        return 0
+            var snapshot = original
+            snapshot.assets.removeAll { $0.code == smokeCode }
+            snapshot.assets.insert(smokeAsset, at: 0)
+            try context.persistence.save(snapshot)
+            return 0
+        } catch {
+            return 65
+        }
     }
 
     private static func verifyAndRestore() -> Int32 {
-        let snapshot = PortfolioStore.loadPortfolio()
-        guard let asset = snapshot.financeAssets.first(where: { $0.id == smokeAssetID && $0.symbol == smokeSymbol }) else {
+        do {
+            let context = try makeContext()
+            let snapshot = try context.persistence.load() ?? FinancialSnapshot()
+            guard let asset = snapshot.assets.first(where: { $0.id == smokeAssetID && $0.code == smokeCode }) else {
+                return 66
+            }
+            guard asset.price == smokePrice else { return 67 }
+            guard let transaction = asset.transactions.first(where: { $0.id == smokeTransactionID }) else {
+                return 68
+            }
+            guard transaction.units == smokeUnits else { return 69 }
+            return restoreOriginalSnapshot()
+        } catch {
             return 66
         }
-        guard asset.currentPrice == smokePrice else { return 67 }
-        guard let transaction = asset.transactions.first(where: { $0.id == smokeTransactionID }) else {
-            return 68
-        }
-        guard transaction.units == smokeUnits && transaction.unitPrice == smokeUnitPrice else {
-            return 69
-        }
-
-        return restoreOriginalPortfolio()
     }
 
-    private static func restoreOriginalPortfolio() -> Int32 {
-        guard let backupData = KeychainPortfolioSnapshot.load(account: backupAccount) else {
-            return 70
-        }
-        guard let snapshot = PortfolioStore.decode(backupData) else {
+    private static func restoreOriginalSnapshot() -> Int32 {
+        do {
+            let context = try makeContext()
+            guard let backupData = try context.keychain.load(account: backupAccount) else {
+                return 70
+            }
+            let snapshot = try decode(backupData)
+            try context.persistence.save(snapshot)
+            try context.keychain.delete(account: backupAccount)
+            return 0
+        } catch {
             return 71
         }
-
-        PortfolioStore.save(snapshot)
-        KeychainPortfolioSnapshot.delete(account: backupAccount)
-        return 0
     }
 
-    private static var smokeAsset: FinanceAsset {
-        FinanceAsset(
+    private static func makeContext() throws -> (
+        persistence: ProductionFinancePersistence,
+        keychain: KeychainSnapshotStore
+    ) {
+        guard let applicationSupport = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first else {
+            throw FinancePersistenceError.unreadableSnapshot
+        }
+        let namespace = FinanceStorage.normalNamespace
+        let directory = FinanceStorage.directory(baseURL: applicationSupport, namespace: namespace)
+        let persistence = ProductionFinancePersistence(
+            directory: directory,
+            keychainService: namespace.keychainService
+        )
+        let keychain = KeychainSnapshotStore(service: namespace.keychainService)
+        return (persistence, keychain)
+    }
+
+    private static func encode(_ snapshot: FinancialSnapshot) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        return try encoder.encode(snapshot)
+    }
+
+    private static func decode(_ data: Data) throws -> FinancialSnapshot {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(FinancialSnapshot.self, from: data)
+    }
+
+    private static var smokeAsset: FinancialAsset {
+        FinancialAsset(
             id: smokeAssetID,
-            symbol: smokeSymbol,
+            code: smokeCode,
             name: "XQ Persistence Smoke",
-            nativeCurrency: .usd,
-            accent: FinanceAsset.accent(for: smokeSymbol),
-            currentPrice: smokePrice,
+            currency: .usd,
+            price: smokePrice,
             transactions: [
-                BuyTransaction(
+                UnitTransaction(
                     id: smokeTransactionID,
-                    date: "Jun 16, 2026",
-                    units: smokeUnits,
-                    unitPrice: smokeUnitPrice
+                    occurredAt: smokeOccurredAt,
+                    units: smokeUnits
                 )
             ]
         )

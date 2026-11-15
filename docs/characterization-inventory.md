@@ -39,7 +39,7 @@ production launch sets these.
 | Routine / exercise editor validation | `RoutineEditorValidationTests`, `ExerciseEditorValidationTests` | |
 | Financial accuracy unit (CHAR-05) | `FinanceStoreTests.testCharacterizationFinancialAccuracyBoundaries` (+ existing store tests) | |
 | A11y ID freeze (CHAR-06) | `CharacterizationContractTests.testFinanceFitnessAndSuperAppAccessibilityIdentifiersAreUniqueAndStable` | |
-| ProductionFinancePersistence (CHAR-08) | `ProductionFinancePersistenceTests` | |
+| ProductionFinancePersistence (CHAR-08) | `ProductionFinancePersistenceTests`; local device smoke via `PersistenceSmokeTestRunner` + `scripts/verify-device-reinstall-persistence.sh` (D2 retarget) | |
 | FitnessRouter bag | `CharacterizationContractTests.testFitnessRouterPathAndSheetAreObservable` | Optional |
 | Package suites on CI (CHAR-01) | T7a / `scripts/run-package-tests.sh` | Not this issue |
 

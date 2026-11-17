@@ -275,9 +275,15 @@ private struct AssetModelDetailSection: View {
 
 struct AssetEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: AssetEditorViewModel
+    @State private var viewModel: AssetEditorViewModel
+
+    init(viewModel: AssetEditorViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         NavigationStack {
             Form {
                 Section("Asset") {
@@ -315,9 +321,15 @@ struct AssetEditorView: View {
 
 struct PriceEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: PriceEditorViewModel
+    @State private var viewModel: PriceEditorViewModel
+
+    init(viewModel: PriceEditorViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         NavigationStack {
             Form {
                 Section("Current Price") {
@@ -344,9 +356,15 @@ struct PriceEditorView: View {
 
 struct UnitEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: UnitEditorViewModel
+    @State private var viewModel: UnitEditorViewModel
+
+    init(viewModel: UnitEditorViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         NavigationStack {
             Form {
                 Section(viewModel.operation == .add ? "Add Units" : "Subtract Units") {
@@ -377,9 +395,15 @@ struct UnitEditorView: View {
 
 struct AssetModelExchangeRateEditorView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var viewModel: ExchangeRateEditorViewModel
+    @State private var viewModel: ExchangeRateEditorViewModel
+
+    init(viewModel: ExchangeRateEditorViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         NavigationStack {
             Form {
                 Section("1 USD in VND") {

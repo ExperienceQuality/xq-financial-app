@@ -147,6 +147,67 @@ final class FinanceViewModelTests: XCTestCase {
         XCTAssertEqual(coordinator.dismissSheetCalls, 0)
     }
 
+    func testExchangeRateEditorRecalculatesUSDContributionButNotVNDAsset() throws {
+        let persistence = InMemoryFinancePersistence()
+        let store = try FinanceStore(persistence: persistence)
+        let coordinator = RecordingFinanceCoordinator()
+        let usdID = UUID()
+        let vndID = UUID()
+        try store.send(.createAsset(
+            id: usdID,
+            code: "USD",
+            name: "Dollar Asset",
+            currency: .usd,
+            price: 100
+        ))
+        try store.send(.addUnits(
+            assetID: usdID,
+            transactionID: UUID(),
+            occurredAt: .now,
+            units: 2
+        ))
+        try store.send(.createAsset(
+            id: vndID,
+            code: "VND",
+            name: "Dong Asset",
+            currency: .vnd,
+            price: 100_000
+        ))
+        try store.send(.addUnits(
+            assetID: vndID,
+            transactionID: UUID(),
+            occurredAt: .now,
+            units: 3
+        ))
+
+        let viewModel = ExchangeRateEditorViewModel(store: store, coordinator: coordinator)
+        viewModel.rate = "25000"
+        viewModel.save()
+        XCTAssertEqual(store.snapshot.totalValueInVND, 5_300_000)
+        XCTAssertEqual(
+            store.asset(id: usdID)?.valueInVND(exchangeRateUSDToVND: store.snapshot.exchangeRateUSDToVND),
+            5_000_000
+        )
+        XCTAssertEqual(
+            store.asset(id: vndID)?.valueInVND(exchangeRateUSDToVND: store.snapshot.exchangeRateUSDToVND),
+            300_000
+        )
+        XCTAssertEqual(coordinator.dismissSheetCalls, 1)
+
+        viewModel.rate = "26000"
+        viewModel.save()
+        XCTAssertEqual(store.snapshot.totalValueInVND, 5_500_000)
+        XCTAssertEqual(
+            store.asset(id: usdID)?.valueInVND(exchangeRateUSDToVND: store.snapshot.exchangeRateUSDToVND),
+            5_200_000
+        )
+        XCTAssertEqual(
+            store.asset(id: vndID)?.valueInVND(exchangeRateUSDToVND: store.snapshot.exchangeRateUSDToVND),
+            300_000
+        )
+        XCTAssertEqual(coordinator.dismissSheetCalls, 2)
+    }
+
     func testConfirmDeleteUsesAsyncDelayOnCoordinator() {
         let coordinator = FinanceTabCoordinator()
         let asset = FinancialAsset(

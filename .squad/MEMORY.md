@@ -34,3 +34,5 @@ This file holds canonical, human-readable knowledge for the repository. Update i
 
 - `ContentUnavailableView` `actions:` can hide button accessibility identifiers from XCUITest; put Retry outside actions for CHAR-03 IDs.
 - D10 honored: T2/T3 (#35) + T7a package CI landed before T6 dropped legacy AppTests.
+- H1 (#44/#45): `testExchangeRateChangeRecalculatesUSDContributionButNotVNDAsset` flake is harness timing (SA H2). CI xcresult showed `openAsset` “Element did not appear” after unit-editor `swipeUp` left the next card out of the tree; math was fine. Prefer `saveExpectingDismissal`, `revealSummary`/`revealAsset`, and `requireLabel` waits. Finance editor VMs need `@State` ownership (Fitness `ExerciseEditorView` pattern). `run-ui-tests.sh -quiet` hides failure text — read the xcresult.
+

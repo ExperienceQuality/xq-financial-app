@@ -81,13 +81,6 @@ struct AssetModelPortfolioScreen: ScreenObject {
             .firstMatch
     }
 
-    func assetCardContaining(code: String) -> XCUIElement {
-        application.descendants(matching: .any)
-            .matching(identifier: AssetModelAccessibility.assetCard)
-            .containing(.staticText, identifier: code)
-            .firstMatch
-    }
-
     func openAddAsset() -> AssetModelEditorScreen {
         addAssetButton.tapWhenHittable()
         return AssetModelEditorScreen(application: application)
@@ -96,12 +89,14 @@ struct AssetModelPortfolioScreen: ScreenObject {
     func openAsset(code: String) -> AssetModelDetailScreen {
         revealAsset(code: code)
         let card = assetCard(code: code)
-        if card.exists {
-            if (card.value as? String) != "expanded" {
-                card.tapWhenHittable()
-            }
-        } else {
-            assetCardContaining(code: code).tapWhenHittable()
+        guard card.exists else {
+            XCTFail(
+                "Expected asset card '\(AssetModelAccessibility.assetCard).\(code)' after revealAsset; refusing bare '\(AssetModelAccessibility.assetCard)' fallback"
+            )
+            return AssetModelDetailScreen(application: application)
+        }
+        if (card.value as? String) != "expanded" {
+            card.tapWhenHittable()
         }
         return AssetModelDetailScreen(application: application)
     }

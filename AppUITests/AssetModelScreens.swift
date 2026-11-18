@@ -1,6 +1,30 @@
 import XCTest
 import XQXCUITestSupport
 
+extension XCUIElement {
+    /// Waits until `label` equals `expected`, then returns self. Fails with the actual label.
+    @discardableResult
+    func requireLabel(
+        _ expected: String,
+        timeout: TimeInterval = 8,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> XCUIElement {
+        let predicate = NSPredicate(format: "label == %@", expected)
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: self)
+        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        let actual = label
+        XCTAssertEqual(
+            result,
+            .completed,
+            "Expected label '\(expected)' within \(timeout)s, got '\(actual)'",
+            file: file,
+            line: line
+        )
+        return self
+    }
+}
+
 enum AssetModelAccessibility {
     static let emptyState = "xq.portfolio.empty-state"
     static let addAsset = "xq.portfolio.add-asset"
@@ -57,31 +81,72 @@ struct AssetModelPortfolioScreen: ScreenObject {
             .firstMatch
     }
 
-    func assetCardContaining(code: String) -> XCUIElement {
-        application.descendants(matching: .any)
-            .matching(identifier: AssetModelAccessibility.assetCard)
-            .containing(.staticText, identifier: code)
-            .firstMatch
-    }
-
     func openAddAsset() -> AssetModelEditorScreen {
         addAssetButton.tapWhenHittable()
         return AssetModelEditorScreen(application: application)
     }
 
     func openAsset(code: String) -> AssetModelDetailScreen {
+        revealAsset(code: code)
         let card = assetCard(code: code)
-        if !card.exists {
-            assetCardContaining(code: code).tapWhenHittable()
-        } else if (card.value as? String) != "expanded" {
+        guard card.exists else {
+            XCTFail(
+                "Expected asset card '\(AssetModelAccessibility.assetCard).\(code)' after revealAsset; refusing bare '\(AssetModelAccessibility.assetCard)' fallback"
+            )
+            return AssetModelDetailScreen(application: application)
+        }
+        if (card.value as? String) != "expanded" {
             card.tapWhenHittable()
         }
         return AssetModelDetailScreen(application: application)
     }
 
     func openExchangeRate() -> AssetModelExchangeRateScreen {
+        revealSummary()
         editExchangeRateButton.tapWhenHittable()
         return AssetModelExchangeRateScreen(application: application)
+    }
+
+    /// Scrolls toward the portfolio header until Edit Rate is hittable (max 8 swipeDown).
+    @discardableResult
+    func revealSummary(timeout: TimeInterval = 8) -> Self {
+        for _ in 0..<8 where !editExchangeRateButton.isHittable {
+            application.swipeDown()
+        }
+        let predicate = NSPredicate(format: "isHittable == true")
+        let expectation = XCTNSPredicateExpectation(
+            predicate: predicate,
+            object: editExchangeRateButton
+        )
+        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        XCTAssertEqual(
+            result,
+            .completed,
+            "Expected Edit Rate to become hittable after revealSummary"
+        )
+        return self
+    }
+
+    /// Scrolls the list until the asset card exists and is hittable (bounded swipes).
+    /// Recovers from unit-editor `swipeUp` first (toward header), then scrolls down if needed.
+    @discardableResult
+    func revealAsset(code: String, timeout: TimeInterval = 8) -> Self {
+        let card = assetCard(code: code)
+        for _ in 0..<4 where !card.exists || !card.isHittable {
+            application.swipeDown()
+        }
+        for _ in 0..<8 where !card.exists || !card.isHittable {
+            application.swipeUp()
+        }
+        let predicate = NSPredicate(format: "exists == true AND isHittable == true")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: card)
+        let result = XCTWaiter.wait(for: [expectation], timeout: timeout)
+        XCTAssertEqual(
+            result,
+            .completed,
+            "Expected asset card '\(code)' to become hittable after revealAsset"
+        )
+        return self
     }
 
     private func element(_ identifier: String) -> XCUIElement {
@@ -220,6 +285,15 @@ struct AssetModelUnitEditorScreen: ScreenObject {
         amountField.replaceText(with: amount)
         saveButton.tapWhenHittable()
     }
+
+    /// Saves and waits for the amount field (sheet) to leave the hierarchy.
+    func saveExpectingDismissal(amount: String, timeout: TimeInterval = 8) {
+        save(amount: amount)
+        XCTAssertTrue(
+            amountField.waitForNonExistence(timeout: timeout),
+            "Expected unit editor sheet to dismiss after save"
+        )
+    }
 }
 
 @MainActor
@@ -232,6 +306,15 @@ struct AssetModelExchangeRateScreen: ScreenObject {
     func save(rate: String) {
         rateField.replaceText(with: rate)
         saveButton.tapWhenHittable()
+    }
+
+    /// Saves and waits for the rate field (sheet) to leave the hierarchy.
+    func saveExpectingDismissal(rate: String, timeout: TimeInterval = 8) {
+        save(rate: rate)
+        XCTAssertTrue(
+            rateField.waitForNonExistence(timeout: timeout),
+            "Expected exchange-rate sheet to dismiss after save"
+        )
     }
 
     func cancel() {

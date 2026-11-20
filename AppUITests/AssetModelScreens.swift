@@ -83,7 +83,16 @@ struct AssetModelPortfolioScreen: ScreenObject {
 
     func openAddAsset() -> AssetModelEditorScreen {
         addAssetButton.tapWhenHittable()
-        return AssetModelEditorScreen(application: application)
+        let editor = AssetModelEditorScreen(application: application)
+        if !editor.codeField.waitForExistence(timeout: 4) {
+            // Sheet presentation can miss the first tap under Simulator load.
+            addAssetButton.tapWhenHittable()
+        }
+        XCTAssertTrue(
+            editor.codeField.waitForExistence(timeout: 8),
+            "Expected asset editor sheet after Add Asset"
+        )
+        return editor
     }
 
     func openAsset(code: String) -> AssetModelDetailScreen {
@@ -167,12 +176,39 @@ struct AssetModelEditorScreen: ScreenObject {
     var saveButton: XCUIElement { application.buttons[AssetModelAccessibility.assetSave] }
 
     func create(code: String, name: String, currency: String, price: String = "0") {
-        codeField.replaceText(with: code)
-        nameField.replaceText(with: name)
+        replaceFocused(codeField, with: code)
+        replaceFocused(nameField, with: name)
         currencyPicker.tapWhenHittable()
         application.buttons[currency].firstMatch.tapWhenHittable()
-        priceField.replaceText(with: price)
+        // Currency menu dismissal races keyboard focus on the price field.
+        replaceFocused(priceField, with: price)
         saveButton.tapWhenHittable()
+        // Sheet dismiss is async; wait before the next portfolio interaction.
+        XCTAssertTrue(
+            codeField.waitForNonExistence(timeout: 8),
+            "Expected asset editor sheet to dismiss after save"
+        )
+    }
+
+    /// Taps until the field owns keyboard focus, then clears and types (H1-style settle waits).
+    private func replaceFocused(_ field: XCUIElement, with value: String) {
+        field.requireExistence()
+        let focused = NSPredicate(format: "hasKeyboardFocus == true")
+        var focusedOK = false
+        for _ in 0..<4 {
+            field.tapWhenHittable()
+            let result = XCTWaiter.wait(
+                for: [XCTNSPredicateExpectation(predicate: focused, object: field)],
+                timeout: 2
+            )
+            if result == .completed {
+                focusedOK = true
+                break
+            }
+        }
+        XCTAssertTrue(focusedOK, "Expected text field to gain keyboard focus")
+        field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 256))
+        field.typeText(value)
     }
 
     func cancel() {
@@ -237,6 +273,18 @@ struct AssetModelDetailScreen: ScreenObject {
         let alert = application.alerts.firstMatch
         XCTAssertTrue(alert.waitForExistence(timeout: 8), "Expected delete confirmation alert")
         tapAlertButton(confirm ? "Delete Asset" : "Cancel", in: alert)
+        // Async present delay + alert teardown: wait before asserting portfolio state.
+        XCTAssertTrue(
+            alert.waitForNonExistence(timeout: 8),
+            "Expected delete confirmation alert to dismiss"
+        )
+        let confirmButton = application.buttons[AssetModelAccessibility.deleteConfirm]
+        if confirmButton.exists {
+            XCTAssertTrue(
+                confirmButton.waitForNonExistence(timeout: 4),
+                "Expected delete-confirm control to leave hierarchy after alert dismiss"
+            )
+        }
     }
 
     private func scrollUntilHittable(_ element: XCUIElement) {

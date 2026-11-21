@@ -18,14 +18,15 @@ Entry: `@main` → `AppDependencyContainer` → `AppCoordinator` → `SuperAppRo
 
 ## Coordinator hierarchy
 
-- Feature flow `navigationDestination` and `.sheet(item:)` live only in
-  `*CoordinatorView.swift` (or an explicitly allowlisted coordinator container).
+- Feature flow `navigationDestination`, `.sheet(item:)`, `.fullScreenCover(item:)`,
+  and `.fileImporter(` live only in `*CoordinatorView.swift` (or an explicitly
+  allowlisted coordinator container).
 - `NavigationLink(value:)` with coordinator-owned route enums is allowed (**D6**).
   `NavigationLink(destination:)` is not.
 - Nested `NavigationStack` inside editor/sheet chrome is allowed (toolbar host only).
 - `router.path` / `sheet` mutations belong in tab coordinators, not views/VMs.
-- `fullScreenCover` is reserved (ADR-7); do not invent a second cover channel without
-  an epic decision.
+- `fullScreenCover` remains reserved as a second cover channel (ADR-7); if used,
+  keep `.fullScreenCover(item:)` in a coordinator container like `.sheet(item:)`.
 - `TabBarAccessibilityBridge` stays in the shell (`SuperAppRootView`).
 
 ## DI

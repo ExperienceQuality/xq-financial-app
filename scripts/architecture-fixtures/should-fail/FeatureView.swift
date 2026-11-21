@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Should-fail fixture: View must not call store.send / importSnapshot / use persistence /
-/// NavigationLink(destination:) / navigationDestination / sheet(item:) / @EnvironmentObject.
+/// NavigationLink(destination:) / navigationDestination / sheet(item:) /
+/// fullScreenCover(item:) / fileImporter( / @EnvironmentObject.
 struct FeatureView: View {
     @EnvironmentObject var store: DummyStore
 
@@ -20,6 +21,12 @@ struct FeatureView: View {
         }
         .navigationDestination(for: String.self) { _ in Text("dest") }
         .sheet(item: .constant(OptionalSheet.one)) { _ in Text("sheet") }
+        .fullScreenCover(item: .constant(OptionalSheet.one)) { _ in Text("cover") }
+        .fileImporter(
+            isPresented: .constant(false),
+            allowedContentTypes: [.json],
+            onCompletion: { _ in }
+        )
     }
 }
 

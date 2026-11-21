@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Static MVVM-C architecture gate (T7b / SA §4.2 / TA §4).
+# Static MVVM-C architecture gate (T7b / SA §4.2 / TA §4 / H5 HARD-06).
 # Prefer this script over in-process AppTests so CI does not need the app runtime.
 set -euo pipefail
 
@@ -8,6 +8,7 @@ cd "${ROOT}"
 
 SCAN_ROOT="${ARCHITECTURE_SCAN_ROOT:-App}"
 PACKAGE_ROOTS=(FinanceCore/Sources FitnessCore/Sources)
+PACKAGE_MANIFESTS=(FinanceCore/Package.swift FitnessCore/Package.swift)
 FIXTURE_MODE=0
 FAILURES=0
 REPORT=()
@@ -42,13 +43,10 @@ if [[ "${1:-}" == "--fixtures" ]]; then
   SCAN_ROOT="scripts/architecture-fixtures"
 fi
 
-# Paths ignored entirely (legacy until T6; previews; fixtures when not in fixture mode).
+# Paths ignored entirely (fixtures when not in fixture mode).
 is_excluded_path() {
   local path="$1"
   case "${path}" in
-    App/Views/*|App/ViewModels/*|App/Models/*|App/Services/*)
-      [[ "${FIXTURE_MODE}" == "0" ]] && return 0
-      ;;
     scripts/architecture-fixtures/*)
       [[ "${FIXTURE_MODE}" == "0" ]] && return 0
       ;;
@@ -56,7 +54,8 @@ is_excluded_path() {
   return 1
 }
 
-# Coordinator containers may host navigationDestination / sheet(item:).
+# Coordinator containers may host navigationDestination / sheet(item:) /
+# fullScreenCover(item:) / fileImporter(.
 is_coordinator_container() {
   local path="$1"
   local base
@@ -151,6 +150,18 @@ scan_file_app() {
     fi
   fi
 
+  if printf '%s\n' "${content}" | grep -nE '\.fullScreenCover[[:space:]]*\([[:space:]]*item[[:space:]]*:' >/dev/null; then
+    if ! is_coordinator_container "${file}"; then
+      fail "${file}: .fullScreenCover(item:) outside coordinator container"
+    fi
+  fi
+
+  if printf '%s\n' "${content}" | grep -nE '\.fileImporter[[:space:]]*\(' >/dev/null; then
+    if ! is_coordinator_container "${file}"; then
+      fail "${file}: .fileImporter( outside coordinator container"
+    fi
+  fi
+
   if printf '%s\n' "${content}" | grep -nE '\bObservableObject\b|@StateObject|@EnvironmentObject' >/dev/null; then
     # Allow UIKit representables / system types; flag app-feature store patterns.
     if printf '%s\n' "${content}" | grep -nE '@EnvironmentObject[[:space:]]+var[[:space:]].*(Store|Coordinator|ViewModel)|@StateObject[[:space:]]+var[[:space:]].*(Store|Coordinator|ViewModel)|:\s*ObservableObject' >/dev/null; then
@@ -181,6 +192,20 @@ scan_package_file() {
   fi
 }
 
+# Package.swift must not declare UI-framework or app-module dependencies.
+scan_package_manifest() {
+  local file="$1"
+  [[ -f "${file}" ]] || {
+    fail "missing package manifest ${file}"
+    return
+  }
+  if grep -nE '\b(SwiftUI|UIKit|AppKit|ios[_-]xq[_-]finance[_-]app)\b' "${file}" >/dev/null; then
+    fail "${file}: Package.swift must not depend on UI frameworks or the app module"
+  else
+    pass "${file}: no UI/app Package.swift dependencies"
+  fi
+}
+
 scan_tree() {
   local root="$1"
   local mode="$2"
@@ -196,22 +221,22 @@ scan_tree() {
   done < <(find "${root}" -type f -name '*.swift' -print0)
 }
 
-# After T6, legacy types must not remain under App/. Soft check: warn via fail only
-# when files exist and we are not excluding them (post-T6). With excludes active,
-# skip ContentView presence check.
-check_legacy_absent_when_unexcluded() {
+# After T6, legacy card-deck trees must stay gone. Soft "excluded until T6" is retired.
+check_legacy_absent_post_t6() {
   if [[ "${FIXTURE_MODE}" == "1" ]]; then
     return 0
   fi
-  # If legacy exclude dirs are gone / empty of ContentView, assert absence.
-  if [[ ! -d App/Views ]] && [[ ! -d App/ViewModels ]]; then
-    if [[ -f App/Views/ContentView.swift ]] || [[ -f App/ViewModels/PortfolioViewModel.swift ]]; then
-      fail "ContentView / PortfolioViewModel still present after legacy tree removal"
-    else
-      pass "legacy ContentView / PortfolioViewModel absent (post-T6)"
+  local issues_before=${FAILURES}
+  for path in App/Views App/ViewModels App/Models; do
+    if [[ -e "${path}" ]]; then
+      fail "legacy path ${path} still present after T6"
     fi
-  else
-    pass "legacy App/Views|ViewModels|Models|Services excluded until T6"
+  done
+  if [[ -f App/Views/ContentView.swift ]] || [[ -f App/ViewModels/PortfolioViewModel.swift ]]; then
+    fail "ContentView / PortfolioViewModel still present after T6"
+  fi
+  if [[ "${FAILURES}" -eq "${issues_before}" ]]; then
+    pass "legacy Views|ViewModels|Models / ContentView / PortfolioViewModel absent (post-T6)"
   fi
 }
 
@@ -221,7 +246,10 @@ run_default_scan() {
   for pkg in "${PACKAGE_ROOTS[@]}"; do
     scan_tree "${pkg}" package
   done
-  check_legacy_absent_when_unexcluded
+  for manifest in "${PACKAGE_MANIFESTS[@]}"; do
+    scan_package_manifest "${manifest}"
+  done
+  check_legacy_absent_post_t6
 }
 
 run_fixture_scan() {
@@ -236,6 +264,15 @@ run_fixture_scan() {
     # Also scan package-like fixture if present
     if [[ -d "${should_fail_root}/package" ]]; then
       scan_tree "${should_fail_root}/package" package
+      if [[ -f "${should_fail_root}/package/Package.swift" ]]; then
+        # Expect a violation; do not emit a PASS line into the expected-fail bucket.
+        local manifest="${should_fail_root}/package/Package.swift"
+        if grep -nE '\b(SwiftUI|UIKit|AppKit|ios[_-]xq[_-]finance[_-]app)\b' "${manifest}" >/dev/null; then
+          fail "${manifest}: Package.swift must not depend on UI frameworks or the app module"
+        else
+          fail "should-fail package Package.swift produced no dependency violation"
+        fi
+      fi
     fi
     local delta=$((FAILURES - prior))
     if [[ "${delta}" -lt 1 ]]; then

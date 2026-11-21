@@ -1,6 +1,8 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
-/// Positive control: coordinator container may own navigationDestination + sheet(item:).
+/// Positive control: coordinator container may own navigationDestination, sheet(item:),
+/// fullScreenCover(item:), and fileImporter(.
 struct LegalCoordinatorView: View {
     @Bindable var coordinator: LegalTabCoordinator
 
@@ -14,6 +16,14 @@ struct LegalCoordinatorView: View {
         .sheet(item: $coordinator.sheet) { destination in
             Text(String(describing: destination))
         }
+        .fullScreenCover(item: $coordinator.cover) { destination in
+            Text(String(describing: destination))
+        }
+        .fileImporter(
+            isPresented: $coordinator.isImporting,
+            allowedContentTypes: [.json],
+            onCompletion: { _ in }
+        )
     }
 }
 
@@ -26,8 +36,15 @@ enum LegalSheet: String, Identifiable {
     var id: String { rawValue }
 }
 
+enum LegalCover: String, Identifiable {
+    case importer
+    var id: String { rawValue }
+}
+
 @Observable
 final class LegalTabCoordinator {
     var path: [LegalRoute] = []
     var sheet: LegalSheet?
+    var cover: LegalCover?
+    var isImporting = false
 }

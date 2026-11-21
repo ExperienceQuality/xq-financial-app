@@ -8,11 +8,7 @@ excluded:
   - .squad
   - FinanceCore/.build
   - FitnessCore/.build
-  # Legacy card-deck paths until T6 lands; drop these excludes after T6 merge.
-  - App/Views
-  - App/ViewModels
-  - App/Models
-  - App/Services
+  # Fixtures are exercised by scripts/check-architecture.sh --fixtures, not lint.
   - scripts/architecture-fixtures
 
 included:
